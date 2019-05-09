@@ -51,6 +51,7 @@ var clock = new THREE.Clock();
 var hero;
 var obstacleCube;
 var startMoving;
+var hasCollided;
 
 init();
 animate();
@@ -74,6 +75,7 @@ function init()
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
 		renderer = new THREE.CanvasRenderer();
+
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
@@ -90,10 +92,10 @@ function init()
 	container.appendChild( stats.domElement );
 	// LIGHT
 	var light = new THREE.PointLight(0xffffff);
-	light.position.set(0,250,0);
+	light.position.set(0, 500, 0);
 	scene.add(light);
 	// FLOOR
-	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/moon.jpg' );
+	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/sand-512.jpg' );
 	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 	floorTexture.repeat.set( 10, 10 );
 	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
@@ -142,16 +144,20 @@ function init()
 }
 
 function addObstacles() {
-	var cube_material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+	var cube_material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
 	var cube_geometry = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1);
 	obstacleCube = new THREE.Mesh( cube_geometry, cube_material );
 	obstacleCube.position.set(24, 25.1, -250);
+	obstacleCube.castShadow = true;
+	obstacleCube.receiveShadow = true;
+
 	scene.add(obstacleCube);
 }
 
 function collisionLogic() {
 	if (hero.position.distanceTo(obstacleCube.position) <= 51) {
-		hero.visible = false;
+		hasCollided = true;
+		alert("Game over!")
 	}
 }
 
@@ -163,13 +169,21 @@ function animate()
 	update();
 }
 
-var moveDistance = 10; // 200 pixels per second
+var moveDistance = 20; // 200 pixels per second
 clock.start();
 var pressTime = 0;
 var timeThreshold = 0.2;
 
 function update()
 {
+	// Game over behavior
+	if (hasCollided) {
+		hero.rotation.x += 0.1;
+		hero.rotation.y += 0.1;
+		obstacleCube.visible = false;
+		stats.update();
+		return;
+	}
 
 	if ( keyboard.pressed("Z") )
 	{
