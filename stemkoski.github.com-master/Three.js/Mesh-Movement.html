@@ -36,7 +36,6 @@ Movement controls: <br/>
 This three.js demo is part of a collection at
 <a href="http://stemkoski.github.io/Three.js/">http://stemkoski.github.io/Three.js/</a>
 </div>
-<!-- ------------------------------------------------------------ -->
 
 <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 <script>
@@ -59,8 +58,8 @@ var MovingCube;
 init();
 animate();
 
-// FUNCTIONS 		
-function init() 
+// FUNCTIONS
+function init()
 {
 	// SCENE
 	scene = new THREE.Scene();
@@ -70,12 +69,12 @@ function init()
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	scene.add(camera);
 	camera.position.set(0,150,400);
-	camera.lookAt(scene.position);	
+	camera.lookAt(scene.position);
 	// RENDERER
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
-		renderer = new THREE.CanvasRenderer(); 
+		renderer = new THREE.CanvasRenderer();
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
@@ -96,7 +95,7 @@ function init()
 	scene.add(light);
 	// FLOOR
 	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
-	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 	floorTexture.repeat.set( 10, 10 );
 	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
 	var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
@@ -110,11 +109,11 @@ function init()
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
 	// scene.add(skyBox);
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-	
+
 	////////////
 	// CUSTOM //
 	////////////
-	
+
 	// create an array with six textures for a cool cube
 	var materialArray = [];
 	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xpos.png' ) }));
@@ -127,15 +126,15 @@ function init()
 	var MovingCubeGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
 	MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
 	MovingCube.position.set(0, 25.1, 0);
-	scene.add( MovingCube );	
-	
+	scene.add( MovingCube );
+
 }
 
 
-function animate() 
+function animate()
 {
     requestAnimationFrame( animate );
-	render();		
+	render();
 	update();
 }
 
@@ -144,7 +143,7 @@ function update()
 	var delta = clock.getDelta(); // seconds.
 	var moveDistance = 200 * delta; // 200 pixels per second
 	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
-	
+
 	// local coordinates
 
 	// local transformations
@@ -157,7 +156,7 @@ function update()
 	if ( keyboard.pressed("Q") )
 		MovingCube.translateX( -moveDistance );
 	if ( keyboard.pressed("E") )
-		MovingCube.translateX(  moveDistance );	
+		MovingCube.translateX(  moveDistance );
 
 	// rotate left/right/up/down
 	var rotation_matrix = new THREE.Matrix4().identity();
@@ -169,13 +168,13 @@ function update()
 		MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
 	if ( keyboard.pressed("F") )
 		MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
-	
+
 	if ( keyboard.pressed("Z") )
 	{
 		MovingCube.position.set(0,25.1,0);
 		MovingCube.rotation.set(0,0,0);
 	}
-		
+
 	// global coordinates
 	if ( keyboard.pressed("left") )
 		MovingCube.position.x -= moveDistance;
@@ -185,12 +184,22 @@ function update()
 		MovingCube.position.z -= moveDistance;
 	if ( keyboard.pressed("down") )
 		MovingCube.position.z += moveDistance;
-		
+
 	controls.update();
+
+	var relativeCameraOffset = new THREE.Vector3(80,200,350);
+
+	var cameraOffset = relativeCameraOffset.applyMatrix4( MovingCube.matrixWorld );
+
+	camera.position.x = cameraOffset.x;
+	camera.position.y = cameraOffset.y;
+	camera.position.z = cameraOffset.z;
+	camera.lookAt( MovingCube.position );
+
 	stats.update();
 }
 
-function render() 
+function render()
 {
 	renderer.render( scene, camera );
 }
