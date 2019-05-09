@@ -26,12 +26,7 @@
 <div id="infoBox" title="Demo Information">
 Movement controls: <br/>
 <ul>
-<li>W/S: Translate Forward/Backward
-<li>A/D: Rotate Left/Right
-<li>Q/E: Translate Left/Right
-<li>R/F: Rotate Up/Down
 <li>Arrow keys: Translate (global directions)
-<li>Z: Reset position and rotation.
 </ul>
 This three.js demo is part of a collection at
 <a href="http://stemkoski.github.io/Three.js/">http://stemkoski.github.io/Three.js/</a>
@@ -55,6 +50,7 @@ var clock = new THREE.Clock();
 
 var hero;
 var obstacleCube;
+var startMoving;
 
 init();
 animate();
@@ -66,11 +62,14 @@ function init()
 	scene = new THREE.Scene();
 	// CAMERA
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 1000;
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-	scene.add(camera);
-	camera.position.set(0,150,400);
+	camera.position.set(0, 150, 400);
 	camera.lookAt(scene.position);
+
+	scene.add(camera);
+
+
 	// RENDERER
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -116,18 +115,30 @@ function init()
 	////////////
 
 	// create an array with six textures for a cool cube
-	var materialArray = [];
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xpos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xneg.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/ypos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/yneg.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zpos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zneg.png' ) }));
-	var heroMat = new THREE.MeshFaceMaterial(materialArray);
-	var heroGeo = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
-	hero = new THREE.Mesh( heroGeo, heroMat );
+
+	hero = new THREE.Group();
+
+	const body = new THREE.Mesh(
+		new THREE.BoxBufferGeometry( 30, 30, 30 ),
+		new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } )
+	);
+	body.position.z = 10;
+	body.castShadow = true;
+	body.receiveShadow = true;
+	hero.add(body);
+
+	const head = new THREE.Mesh(
+			new THREE.BoxBufferGeometry(10,10,10),
+			new THREE.MeshLambertMaterial( { color: 0xF0619A, flatShading: true } )
+	);
+	head.position.z = 35;
+	head.position.y = 35;
+	head.castShadow = true;
+	head.receiveShadow = false;
+	hero.add(head);
+
 	hero.position.set(0, 25.1, 0);
-	scene.add( hero );
+	scene.add(hero);
 	addObstacles();
 }
 
@@ -135,7 +146,7 @@ function addObstacles() {
 	var cube_material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 	var cube_geometry = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1);
 	obstacleCube = new THREE.Mesh( cube_geometry, cube_material );
-	obstacleCube.position.set(100, 25.1, 0);
+	obstacleCube.position.set(24, 25.1, -250);
 	scene.add(obstacleCube);
 }
 
@@ -153,36 +164,13 @@ function animate()
 	update();
 }
 
+var moveDistance = 10; // 200 pixels per second
+clock.start();
+var pressTime = 0;
+var timeThreshold = 0.2;
+
 function update()
 {
-	var delta = clock.getDelta(); // seconds.
-	var moveDistance = 200 * delta; // 200 pixels per second
-	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
-
-	// local coordinates
-
-	// local transformations
-
-	// move forwards/backwards/left/right
-	if ( keyboard.pressed("W") )
-		hero.translateZ( -moveDistance );
-	if ( keyboard.pressed("S") )
-		hero.translateZ(  moveDistance );
-	if ( keyboard.pressed("Q") )
-		hero.translateX( -moveDistance );
-	if ( keyboard.pressed("E") )
-		hero.translateX(  moveDistance );
-
-	// rotate left/right/up/down
-	var rotation_matrix = new THREE.Matrix4().identity();
-	if ( keyboard.pressed("A") )
-		hero.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-	if ( keyboard.pressed("D") )
-		hero.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-	if ( keyboard.pressed("R") )
-		hero.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
-	if ( keyboard.pressed("F") )
-		hero.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
 
 	if ( keyboard.pressed("Z") )
 	{
@@ -191,25 +179,32 @@ function update()
 	}
 
 	// global coordinates
-	if ( keyboard.pressed("left") )
+	var currTime = clock.getElapsedTime();
+	if ( keyboard.pressed("left") && currTime - pressTime > timeThreshold) {
 		hero.position.x -= moveDistance;
-	if ( keyboard.pressed("right") )
+		pressTime = currTime;
+	}
+	if ( keyboard.pressed("right") && currTime - pressTime > timeThreshold) {
 		hero.position.x += moveDistance;
-	if ( keyboard.pressed("up") )
+		pressTime = currTime;
+	}
+	if ( keyboard.pressed("up") && currTime - pressTime > timeThreshold) {
 		hero.position.z -= moveDistance;
-	if ( keyboard.pressed("down") )
+		pressTime = currTime;
+	}
+	if ( keyboard.pressed("down") && currTime - pressTime > timeThreshold) {
 		hero.position.z += moveDistance;
+		pressTime = currTime;
+	}
 
-	controls.update();
-
-	var relativeCameraOffset = new THREE.Vector3(80,200,350);
+	var relativeCameraOffset = new THREE.Vector3(0,50,200);
 
 	var cameraOffset = relativeCameraOffset.applyMatrix4( hero.matrixWorld );
 
 	camera.position.x = cameraOffset.x;
-	camera.position.y = cameraOffset.y;
+	camera.position.y = cameraOffset.y * 2;
 	camera.position.z = cameraOffset.z;
-	camera.lookAt( hero.position );
+	// camera.lookAt( hero.position );
 
 	stats.update();
 	collisionLogic();
