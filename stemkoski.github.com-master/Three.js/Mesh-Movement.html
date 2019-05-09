@@ -158,32 +158,41 @@ function animate()
 	update();
 }
 
+var moveDistance = 25; // 200 pixels per second
+clock.start();
+var pressTime = 0;
+var timeThreshold = 0.2;
+
 function update()
 {
-	var delta = clock.getDelta(); // seconds.
-	var moveDistance = 10; // 200 pixels per second
+
+	if ( keyboard.pressed("Z") )
+	{
+		MovingCube.position.set(0,25.1,0);
+		MovingCube.rotation.set(0,0,0);
+	}
 
 	// global coordinates
-	if ( keyboard.pressed("left") ) {
-		startMoving = true;
-		hero.position.x -= moveDistance;
+	var currTime = clock.getElapsedTime();
+	if ( keyboard.pressed("left") && currTime - pressTime > timeThreshold) {
+		MovingCube.position.x -= moveDistance;
+		pressTime = currTime;
 	}
-	if ( keyboard.pressed("right") ) {
-		startMoving = true;
-		hero.position.x += moveDistance;
+	if ( keyboard.pressed("right") && currTime - pressTime > timeThreshold) {
+		MovingCube.position.x += moveDistance;
+		pressTime = currTime;
 	}
-	if ( keyboard.pressed("up") ) {
-		startMoving = true;
-		hero.position.z -= moveDistance;
+	if ( keyboard.pressed("up") && currTime - pressTime > timeThreshold) {
+		MovingCube.position.z -= moveDistance;
+		pressTime = currTime;
 	}
-	if ( keyboard.pressed("down") ) {
-		startMoving = true;
-		hero.position.z += moveDistance;
+	if ( keyboard.pressed("down") && currTime - pressTime > timeThreshold) {
+		MovingCube.position.z += moveDistance;
+		pressTime = currTime;
 	}
 
 	controls.update();
 
-	var relativeCameraOffset = new THREE.Vector3(80,200,350);
 
 	var cameraOffset = relativeCameraOffset.applyMatrix4( hero.matrixWorld );
 
