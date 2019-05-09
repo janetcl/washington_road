@@ -26,17 +26,11 @@
 <div id="infoBox" title="Demo Information">
 Movement controls: <br/>
 <ul>
-<li>W/S: Translate Forward/Backward
-<li>A/D: Rotate Left/Right
-<li>Q/E: Translate Left/Right
-<li>R/F: Rotate Up/Down
 <li>Arrow keys: Translate (global directions)
-<li>Z: Reset position and rotation.
 </ul>
 This three.js demo is part of a collection at
 <a href="http://stemkoski.github.io/Three.js/">http://stemkoski.github.io/Three.js/</a>
 </div>
-<!-- ------------------------------------------------------------ -->
 
 <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 <script>
@@ -54,7 +48,8 @@ var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 // custom global variables
 
-var MovingCube;
+var hero;
+var startMoving;
 
 init();
 animate();
@@ -116,25 +111,48 @@ function init()
 	////////////
 
 	// create an array with six textures for a cool cube
-	var materialArray = [];
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xpos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xneg.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/ypos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/yneg.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zpos.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zneg.png' ) }));
-	var MovingCubeMat = new THREE.MeshFaceMaterial(materialArray);
-	var MovingCubeGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
-	MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
-	MovingCube.position.set(0, 25.1, 0);
-	scene.add( MovingCube );
+	// var materialArray = [];
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xpos.png' ) }));
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/xneg.png' ) }));
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/ypos.png' ) }));
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/yneg.png' ) }));
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zpos.png' ) }));
+	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zneg.png' ) }));
+	// var MovingCubeMat = new THREE.MeshFaceMaterial(materialArray);
+	// var MovingCubeGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
+	// MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
+	// MovingCube.position.set(0, 25.1, 0);
+	// scene.add( MovingCube );
+
+	hero = new THREE.Group();
+
+	const body = new THREE.Mesh(
+		new THREE.BoxBufferGeometry( 30, 30, 30 ),
+		new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } )
+	);
+	body.position.z = 10;
+	body.castShadow = true;
+	body.receiveShadow = true;
+	hero.add(body);
+
+	const head = new THREE.Mesh(
+			new THREE.BoxBufferGeometry( 5, 5, 5 ),
+			new THREE.MeshLambertMaterial( { color: 0xF0619A, flatShading: true } )
+	);
+	head.position.z = 21;
+	head.castShadow = true;
+	head.receiveShadow = false;
+	hero.add(head);
+
+	hero.position.set(0, 25.1, 0);
+	scene.add(hero)
 
 }
 
 
 function animate()
 {
-    requestAnimationFrame( animate );
+  requestAnimationFrame( animate );
 	render();
 	update();
 }
@@ -173,6 +191,15 @@ function update()
 	}
 
 	controls.update();
+
+
+	var cameraOffset = relativeCameraOffset.applyMatrix4( hero.matrixWorld );
+
+	camera.position.x = cameraOffset.x;
+	camera.position.y = cameraOffset.y;
+	camera.position.z = cameraOffset.z;
+	camera.lookAt( hero.position );
+
 	stats.update();
 }
 
