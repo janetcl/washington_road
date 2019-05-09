@@ -168,22 +168,22 @@ function update()
 
 	if ( keyboard.pressed("Z") )
 	{
-		MovingCube.position.set(0,25.1,0);
-		MovingCube.rotation.set(0,0,0);
+		hero.position.set(0,25.1,0);
+		hero.rotation.set(0,0,0);
 	}
 
 	// global coordinates
 	var currTime = clock.getElapsedTime();
 	if ( keyboard.pressed("left") && currTime - pressTime > timeThreshold) {
-		MovingCube.position.x -= moveDistance;
+		hero.position.x -= moveDistance;
 		pressTime = currTime;
 	}
 	if ( keyboard.pressed("right") && currTime - pressTime > timeThreshold) {
-		MovingCube.position.x += moveDistance;
+		hero.position.x += moveDistance;
 		pressTime = currTime;
 	}
 	if ( keyboard.pressed("up") && currTime - pressTime > timeThreshold) {
-		MovingCube.position.z -= moveDistance;
+		hero.position.z -= moveDistance;
 		pressTime = currTime;
 	}
 	if ( keyboard.pressed("down") && currTime - pressTime > timeThreshold) {
