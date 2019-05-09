@@ -118,11 +118,11 @@ function init()
 	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/yneg.png' ) }));
 	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zpos.png' ) }));
 	// materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/zneg.png' ) }));
-	// var MovingCubeMat = new THREE.MeshFaceMaterial(materialArray);
-	// var MovingCubeGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
-	// MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
-	// MovingCube.position.set(0, 25.1, 0);
-	// scene.add( MovingCube );
+	// var heroMat = new THREE.MeshFaceMaterial(materialArray);
+	// var heroGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
+	// hero = new THREE.Mesh( heroGeom, heroMat );
+	// hero.position.set(0, 25.1, 0);
+	// scene.add( hero );
 
 	hero = new THREE.Group();
 
@@ -187,7 +187,7 @@ function update()
 		pressTime = currTime;
 	}
 	if ( keyboard.pressed("down") && currTime - pressTime > timeThreshold) {
-		MovingCube.position.z += moveDistance;
+		hero.position.z += moveDistance;
 		pressTime = currTime;
 	}
 
