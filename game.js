@@ -37,6 +37,8 @@ let stepStartTimestamp;
 
 let gameEnded;
 let coinCount = 0;
+let enteredIceTimestamp = 0;
+let onIce = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -68,7 +70,7 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-const laneTypes = ['car', 'truck', 'forest', 'river'];
+const laneTypes = ['car', 'truck', 'forest', 'river', 'ice'];
 const laneSpeeds = [2, 2.5, 3];
 const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
@@ -84,6 +86,8 @@ const initaliseValues = () => {
     startMoving = false;
     moves = [];
     stepStartTimestamp;
+    enteredIceTimestamp = 0;
+    onIce = false;
 
     chicken.position.x = 0;
     chicken.position.y = 0;
@@ -351,6 +355,29 @@ function Road() {
     return road;
 }
 
+function Ice() {
+    const ice = new THREE.Group();
+
+    const createSection = color => new THREE.Mesh(
+        new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
+        new THREE.MeshPhongMaterial( { color } )
+    );
+
+    const middle = createSection(0xffffff);
+    middle.receiveShadow = true;
+    ice.add(middle);
+
+    const left = createSection(0xd3d3d3);
+    left.position.x = - boardWidth*zoom;
+    ice.add(left);
+
+    const right = createSection(0xd3d3d3);
+    right.position.x = boardWidth*zoom;
+    ice.add(right);
+
+    return ice;
+}
+
 function Water() {
     const water = new THREE.Group();
 
@@ -423,6 +450,11 @@ function Lane(index) {
                 this.mesh.add( three );
                 return three;
             })
+            break;
+        }
+        case 'ice': {
+            this.type = 'ice';
+            this.mesh = new Ice();
             break;
         }
         case 'car' : {
@@ -656,9 +688,21 @@ function animate(timestamp) {
       }
       currentColumn = Math.round((chicken.position.x + 672) / 84);
     }
-    console.log(chicken.position);
-    console.log(currentColumn);
-    console.log(currentLane);
+    // console.log(chicken.position);
+    // console.log(currentColumn);
+    // console.log(currentLane);
+    if (lanes[currentLane].type === 'ice') {
+      if (!onIce) {
+        onIce = true;
+        enteredIceTimestamp = timestamp;
+       }
+       if (timestamp - enteredIceTimestamp > 2.5 * 10**3) {
+         gameEnded = true;
+         endDOM.style.visibility = 'visible';
+       }
+    } else if (onIce) {
+      onIce = false;
+    }
 
     if(startMoving) {
         stepStartTimestamp = timestamp;
@@ -777,7 +821,7 @@ function animate(timestamp) {
             }
         });
         if (inWater) {
-            console.log("BADBADBADBDADADADAD");
+            // console.log("BADBADBADBDADADADAD");
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
