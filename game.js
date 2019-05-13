@@ -46,6 +46,9 @@ const truckFrontTexture = new Texture(30,30,[{x: 15, y: 0, w: 10, h: 30 }]);
 const truckRightSideTexture = new Texture(25,30,[{x: 0, y: 15, w: 10, h: 10 }]);
 const truckLeftSideTexture = new Texture(25,30,[{x: 0, y: 5, w: 10, h: 10 }]);
 
+var frustum = new THREE.Frustum();
+var cameraViewProjectionMatrix = new THREE.Matrix4();
+
 const generateLanes = () => [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9].map((index) => {
     const lane = new Lane(index);
     lane.mesh.position.y = index*positionWidth*zoom;
@@ -462,7 +465,6 @@ function move(direction) {
     if (direction === 'forward') {
         if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return;
         if(!stepStartTimestamp) startMoving = true;
-        addLane();
     }
     else if (direction === 'backward') {
         if(finalPositions.lane === 0) return;
@@ -482,8 +484,44 @@ function move(direction) {
     moves.push(direction);
 }
 
+function toScreenPosition(obj, camera)
+{
+    var vector = new THREE.Vector3();
+
+    var widthHalf = 0.5*renderer.context.canvas.width;
+    var heightHalf = 0.5*renderer.context.canvas.height;
+
+    obj.updateMatrixWorld();
+    vector.setFromMatrixPosition(obj.matrixWorld);
+    vector.project(camera);
+
+    vector.x = ( vector.x * widthHalf ) + widthHalf;
+    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+
+    return {
+        x: vector.x,
+        y: vector.y
+    };
+
+};
+
 function animate(timestamp) {
+
     requestAnimationFrame( animate );
+
+    var proj = toScreenPosition(chicken, camera);
+    if (proj.y < 0.3*renderer.context.canvas.height)
+      camera.position.y = camera.position.y + 8;
+    else if (proj.y < 0.4*renderer.context.canvas.height)
+        camera.position.y = camera.position.y + 4;
+    else if (proj.y < 0.5*renderer.context.canvas.height)
+        camera.position.y = camera.position.y + 2;
+    else
+      camera.position.y = camera.position.y + 1;
+    if ((camera.position.y - initialCameraPositionY) % 80 >= 79) {
+      console.log(proj);
+      addLane();
+    }
 
     if(!previousTimestamp) previousTimestamp = timestamp;
     const delta = timestamp - previousTimestamp;
@@ -515,13 +553,13 @@ function animate(timestamp) {
         const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom;
         switch(moves[0]) {
             case 'forward': {
-                camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;
+                // camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;
                 chicken.position.y = currentLane*positionWidth*zoom + moveDeltaDistance; // initial chicken position is 0
                 chicken.position.z = jumpDeltaDistance;
                 break;
             }
             case 'backward': {
-                camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom - moveDeltaDistance;
+                // camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom - moveDeltaDistance;
                 chicken.position.y = currentLane*positionWidth*zoom - moveDeltaDistance;
                 chicken.position.z = jumpDeltaDistance;
                 break;
@@ -545,6 +583,7 @@ function animate(timestamp) {
                 case 'forward': {
                     currentLane++;
                     counterDOM.innerHTML = currentLane;
+                    addLane();
                     break;
                 }
                 case 'backward': {
@@ -581,6 +620,19 @@ function animate(timestamp) {
             }
         });
     }
+
+    // every time the camera or objects change position (or every frame)
+    camera.updateMatrixWorld(); // make sure the camera matrix is updated
+    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+    cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+    frustum.setFromMatrix( cameraViewProjectionMatrix );
+    // frustum is now ready to check all the objects you need
+    if (!frustum.containsPoint(chicken.position)) {
+      gameEnded = true;
+      endDOM.style.visibility = 'visible';
+    }
+
+
     renderer.render( scene, camera );
 }
 
