@@ -154,9 +154,11 @@ function Wheel() {
 }
 // AT: Coins increase the player score
 function Coin() {
-  var geometry = new THREE.CylinderBufferGeometry( 10*zoom, 10*zoom, 4*zoom, 10 );
-  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+  var geometry = new THREE.CylinderBufferGeometry( 10*zoom, 10*zoom, 6*zoom, 10 );
+  var material = new THREE.MeshPhongMaterial( {color: 0xFFDF2D, flatShading: true} );
   var coin = new THREE.Mesh( geometry, material );
+  coin.castShadow = true;
+  coin.receiveShadow = true;
   coin.rotation.setFromVector3(new THREE.Vector3( Math.PI / 2, 0, 0));
   coin.position.z = 1 * zoom;
   return coin;
