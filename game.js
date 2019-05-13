@@ -78,7 +78,7 @@ const initaliseValues = () => {
 
     currentLane = 0;
     currentColumn = Math.floor(columns/2);
-
+    coinCount = 0;
     previousTimestamp = null;
 
     startMoving = false;
@@ -90,7 +90,7 @@ const initaliseValues = () => {
 
     camera.position.y = initialCameraPositionY;
     camera.position.x = initialCameraPositionX;
-
+    counterDOM.innerHTML = 0;
     gameEnded = false;
 }
 
@@ -669,7 +669,6 @@ function animate(timestamp) {
         const moveDeltaTime = timestamp - stepStartTimestamp;
         const moveDeltaDistance = Math.min(moveDeltaTime/stepTime,1)*positionWidth*zoom;
         const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom;
-                  console.log(coinCount);
         switch(moves[0]) {
             case 'forward': {
                 // camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;
@@ -720,10 +719,12 @@ function animate(timestamp) {
                 }
                 case 'left': {
                     currentColumn--;
+                    counterDOM.innerHTML = currentLane + coinCount;
                     break;
                 }
                 case 'right': {
                     currentColumn++;
+                    counterDOM.innerHTML = currentLane + coinCount;
                     break;
                 }
             }
@@ -760,7 +761,7 @@ function animate(timestamp) {
             }
         });
         toRemove.forEach(coin => {
-          lanes[currentLane].coins.splice(lanes[currentLane].coins.indexOf(coin, 1));
+          lanes[currentLane].coins.splice(lanes[currentLane].coins.indexOf(coin), 1);
         });
     }
     if(lanes[currentLane].type === 'river') {
