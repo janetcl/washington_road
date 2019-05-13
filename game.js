@@ -35,6 +35,8 @@ let startMoving;
 let moves;
 let stepStartTimestamp;
 
+let gameEnded;
+
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
 const carRightSideTexture = new Texture(110,40,[{x: 10, y: 0, w: 50, h: 30 }, {x: 70, y: 0, w: 30, h: 30 }]);
@@ -84,6 +86,8 @@ const initaliseValues = () => {
 
     camera.position.y = initialCameraPositionY;
     camera.position.x = initialCameraPositionX;
+
+    gameEnded = false;
 }
 
 initaliseValues();
@@ -427,6 +431,8 @@ document.getElementById('left').addEventListener("click", () => move('left'));
 document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
+    if (gameEnded) return;
+
     if (event.keyCode == '38') {
         // up arrow
         move('forward');
@@ -570,10 +576,10 @@ function animate(timestamp) {
             const carMinX = vechicle.position.x - vechicleLength*zoom/2;
             const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
+                gameEnded = true;
                 endDOM.style.visibility = 'visible';
             }
         });
-
     }
     renderer.render( scene, camera );
 }
