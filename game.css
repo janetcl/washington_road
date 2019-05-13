@@ -10,6 +10,13 @@ button {
   outline: none;
   cursor: pointer;
 }
+#iconsCredit {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 12px;
+  color: white;
+}
 #counter {
   position: absolute;
   top: 20px;
