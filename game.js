@@ -161,7 +161,8 @@ function Coin() {
   var geometry = new THREE.CylinderBufferGeometry( 10*zoom, 10*zoom, 4*zoom, 10 );
   var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
   var coin = new THREE.Mesh( geometry, material );
-  coin.position.z = 12 * zoom;
+  coin.rotation.setFromVector3(new THREE.Vector3( Math.PI / 2, 0, 0));
+  coin.position.z = 1 * zoom;
   return coin;
 }
 
@@ -355,6 +356,7 @@ function Road() {
     return road;
 }
 
+// AT: Ice layer that players die on after standing for too long.
 function Ice() {
     const ice = new THREE.Group();
 
@@ -376,6 +378,29 @@ function Ice() {
     ice.add(right);
 
     return ice;
+}
+
+function Track() {
+    const road = new THREE.Group();
+
+    const createSection = color => new THREE.Mesh(
+        new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
+        new THREE.MeshPhongMaterial( { color } )
+    );
+
+    const middle = createSection(0x454A59);
+    middle.receiveShadow = true;
+    road.add(middle);
+
+    const left = createSection(0x393D49);
+    left.position.x = - boardWidth*zoom;
+    road.add(left);
+
+    const right = createSection(0x393D49);
+    right.position.x = boardWidth*zoom;
+    road.add(right);
+
+    return road;
 }
 
 function Water() {
@@ -548,6 +573,28 @@ function Lane(index) {
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
             break;
         }
+        // case 'train' : {
+        //     this.type = 'train';
+        //     this.mesh = new Water();
+        //     this.direction = Math.random() >= 0.5;
+        //
+        //     const occupiedPositions = new Set();
+        //     this.vechicles = [1,2,3].map(() => {
+        //         const vechicle = new Plank();
+        //         let position;
+        //         do {
+        //             position = Math.floor(Math.random()*columns/2);
+        //         }while(occupiedPositions.has(position))
+        //         occupiedPositions.add(position);
+        //         vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+        //         if(!this.direction) vechicle.rotation.z = Math.PI;
+        //         this.mesh.add( vechicle );
+        //         return vechicle;
+        //     })
+        //
+        //     this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+        //     break;
+        // }
     }
 }
 
