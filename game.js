@@ -36,6 +36,7 @@ let moves;
 let stepStartTimestamp;
 
 let gameEnded;
+let coinCount = 0;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -150,6 +151,14 @@ function Wheel() {
     );
     wheel.position.z = 6*zoom;
     return wheel;
+}
+// AT: Coins increase the player score
+function Coin() {
+  var geometry = new THREE.CylinderBufferGeometry( 10*zoom, 10*zoom, 4*zoom, 10 );
+  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+  var coin = new THREE.Mesh( geometry, material );
+  coin.position.z = 12 * zoom;
+  return coin;
 }
 
 function Car() {
@@ -391,6 +400,19 @@ function Lane(index) {
                 this.mesh.add( vechicle );
                 return vechicle;
             })
+            // AT
+            this.coins = [1,2].map(() => {
+                const coin = new Coin();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/2);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) coin.rotation.z = Math.PI;
+                this.mesh.add( coin );
+                return coin;
+            })
 
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
             break;
@@ -411,6 +433,20 @@ function Lane(index) {
                 if(!this.direction) vechicle.rotation.z = Math.PI;
                 this.mesh.add( vechicle );
                 return vechicle;
+            })
+
+            // AT
+            this.coins = [1,2].map(() => {
+                const coin = new Coin();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/2);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) coin.rotation.z = Math.PI;
+                this.mesh.add( coin );
+                return coin;
             })
 
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
@@ -551,6 +587,7 @@ function animate(timestamp) {
         const moveDeltaTime = timestamp - stepStartTimestamp;
         const moveDeltaDistance = Math.min(moveDeltaTime/stepTime,1)*positionWidth*zoom;
         const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom;
+                  console.log(coinCount);
         switch(moves[0]) {
             case 'forward': {
                 // camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;
@@ -582,13 +619,13 @@ function animate(timestamp) {
             switch(moves[0]) {
                 case 'forward': {
                     currentLane++;
-                    counterDOM.innerHTML = currentLane;
+                    counterDOM.innerHTML = currentLane + coinCount;
                     addLane();
                     break;
                 }
                 case 'backward': {
                     currentLane--;
-                    counterDOM.innerHTML = currentLane;
+                    counterDOM.innerHTML = currentLane + coinCount;
                     break;
                 }
                 case 'left': {
@@ -618,6 +655,22 @@ function animate(timestamp) {
                 gameEnded = true;
                 endDOM.style.visibility = 'visible';
             }
+        });
+
+        // AT: check for coin collision
+        const coinLength = 10;
+        let toRemove = [];
+        lanes[currentLane].coins.forEach(coin => {
+            const coinMinX = coin.position.x - coinLength*zoom/2;
+            const coinMaxX = coin.position.x + coinLength*zoom/2;
+            if(chickenMaxX > coinMinX && chickenMinX < coinMaxX) {
+                coinCount = coinCount + 1;
+                lanes[currentLane].mesh.remove(coin);
+                toRemove.push(coin);
+            }
+        });
+        toRemove.forEach(coin => {
+          lanes[currentLane].coins.splice(lanes[currentLane].coins.indexOf(coin, 1));
         });
     }
 
