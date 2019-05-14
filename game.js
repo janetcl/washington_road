@@ -71,7 +71,7 @@ const chicken = new Chicken();
 scene.add( chicken );
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice'];
-const laneSpeeds = [2, 2.5, 3];
+const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
 
@@ -271,7 +271,7 @@ function Truck() {
     const color = 0x9F5919;
 
     const main = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 5*zoom ),
+      new THREE.BoxBufferGeometry( 100*zoom, 30*zoom, 5*zoom ),
       new THREE.MeshPhongMaterial( { color, flatShading: true } )
     );
     main.position.z = 0*zoom;
@@ -686,6 +686,8 @@ function toScreenPosition(obj, camera)
 
 };
 
+var prevPosition = 0;
+
 function animate(timestamp) {
 
     requestAnimationFrame( animate );
@@ -729,10 +731,12 @@ function animate(timestamp) {
     if (lanes[currentLane].type === 'river') {
       if(lanes[currentLane].direction) {
           chicken.position.x = chicken.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : chicken.position.x -= lanes[currentLane].speed/16*delta;
+          prevPosition = prevPosition < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : prevPosition -= lanes[currentLane].speed/16*delta;
           camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x -= lanes[currentLane].speed/16*delta;
       }
       else{
           chicken.position.x = chicken.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : chicken.position.x += lanes[currentLane].speed/16*delta;
+          prevPosition = prevPosition < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : prevPosition += lanes[currentLane].speed/16*delta;
           camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x += lanes[currentLane].speed/16*delta;
       }
       currentColumn = Math.round((chicken.position.x + 672) / 84);
@@ -770,30 +774,39 @@ function animate(timestamp) {
                 break;
             }
             case 'backward': {
-                if (lanes[currentLane].type === 'river' && lanes[currentLane-1].type !== 'river') {
-                  chicken.position.x = 84*currentColumn - 672;
-                  camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2;
-                }
                 // camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom - moveDeltaDistance;
                 chicken.position.y = currentLane*positionWidth*zoom - moveDeltaDistance;
                 chicken.position.z = jumpDeltaDistance;
                 break;
             }
             case 'left': {
-                camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
-                chicken.position.x = (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance; // initial chicken position is 0
+                if (lanes[currentLane].type == 'river') {
+                  chicken.position.x = ((prevPosition+672)/84*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
+                  camera.position.x = initialCameraPositionX + ((prevPosition+672)/84*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
+                }
+                else {
+                  chicken.position.x = (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
+                  camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
+                }
                 chicken.position.z = jumpDeltaDistance;
                 break;
             }
             case 'right': {
-                camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
+              if (lanes[currentLane].type == 'river') {
+                chicken.position.x = ((prevPosition+672)/84*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
+                camera.position.x = initialCameraPositionX + ((prevPosition+672)/84*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
+              }
+              else {
                 chicken.position.x = (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
-                chicken.position.z = jumpDeltaDistance;
-                break;
+                camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
+              }
+              chicken.position.z = jumpDeltaDistance;
+              break;
             }
         }
         // Once a step has ended
         if(moveDeltaTime > stepTime) {
+            prevPosition = chicken.position.x;
             switch(moves[0]) {
                 case 'forward': {
                   if (lanes[currentLane].type === 'river' && lanes[currentLane+1].type !== 'river') {
@@ -806,6 +819,10 @@ function animate(timestamp) {
                     break;
                 }
                 case 'backward': {
+                  if (lanes[currentLane].type === 'river' && lanes[currentLane-1].type !== 'river') {
+                    chicken.position.x = 84*currentColumn - 672;
+                    camera.position.x = initialCameraPositionX + (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2;
+                  }
                     currentLane--;
                     counterDOM.innerHTML = currentLane + coinCount;
                     break;
@@ -860,7 +877,7 @@ function animate(timestamp) {
     if(lanes[currentLane].type === 'river') {
         const chickenMinX = originalChickenX - chickenSize*zoom/2;
         const chickenMaxX = originalChickenX + chickenSize*zoom/2;
-        const vechicleLength = { car: 60, truck: 105, river: 60 }[lanes[currentLane].type];
+        const vechicleLength = { car: 60, truck: 105, river: 100 }[lanes[currentLane].type];
         let inWater = true;
         lanes[currentLane].vechicles.forEach(vechicle => {
             const carMinX = vechicle.position.x - vechicleLength*zoom/2;
@@ -870,7 +887,11 @@ function animate(timestamp) {
             }
         });
         if (inWater) {
-            // console.log("BADBADBADBDADADADAD");
+            console.log("death in water")
+            console.log(chickenMaxX)
+            console.log(chickenMinX)
+            console.log(lanes[currentLane].vechicles)
+            console.log(lanes[currentLane])
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
