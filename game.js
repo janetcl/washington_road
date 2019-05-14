@@ -41,13 +41,10 @@ let enteredIceTimestamp = 0;
 let onIce = false;
 
 var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
-<<<<<<< HEAD
 var psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
 var psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.jpg").flipY;
 var umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
 var umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
-=======
->>>>>>> 36e68dcef5895a57ddf36cb9582489a4a6d59cb5
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
