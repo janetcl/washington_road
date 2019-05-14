@@ -372,23 +372,64 @@ function Three() {
 function Chicken() {
     const chicken = new THREE.Group();
 
+    const rightLeg = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 5*zoom, 5*zoom, 12*zoom ),
+      new THREE.MeshPhongMaterial( { color: 0x0E5097, flatShading: true } )
+    );
+    rightLeg.position.z = 8*zoom;
+    rightLeg.position.x = 4*zoom;
+    rightLeg.castShadow = true;
+    rightLeg.receiveShadow = true;
+    chicken.add(rightLeg);
+
+
+    const leftLeg = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 5*zoom, 5*zoom, 12*zoom ),
+      new THREE.MeshPhongMaterial( { color: 0x0E5097, flatShading: true } )
+    );
+    leftLeg.position.z = 8*zoom;
+    leftLeg.position.x = -4*zoom;
+    leftLeg.castShadow = true;
+    leftLeg.receiveShadow = true;
+    chicken.add(leftLeg);
+
     const body = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( chickenSize*zoom, chickenSize*zoom, 20*zoom ),
+      new THREE.BoxBufferGeometry( 15*zoom, 10*zoom, 18*zoom ),
       new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
     );
-    body.position.z = 10*zoom;
+    body.position.z = 23*zoom;
     body.castShadow = true;
     body.receiveShadow = true;
     chicken.add(body);
 
-    const rowel = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( 2*zoom, 4*zoom, 2*zoom ),
+    const leftArm = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 4*zoom, 4*zoom, 11*zoom ),
+      new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
+    );
+    leftArm.position.z = 26*zoom;
+    leftArm.position.x = -9*zoom;
+    leftArm.castShadow = true;
+    leftArm.receiveShadow = true;
+    chicken.add(leftArm);
+
+    const rightArm = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 4*zoom, 4*zoom, 11*zoom ),
+      new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
+    );
+    rightArm.position.z = 26*zoom;
+    rightArm.position.x = 9*zoom;
+    rightArm.castShadow = true;
+    rightArm.receiveShadow = true;
+    chicken.add(rightArm);
+
+    const head = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( 8*zoom, 8*zoom, 8*zoom ),
         new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } )
     );
-    rowel.position.z = 21*zoom;
-    rowel.castShadow = true;
-    rowel.receiveShadow = false;
-    chicken.add(rowel);
+    head.position.z = 35*zoom;
+    head.castShadow = true;
+    head.receiveShadow = false;
+    chicken.add(head);
 
     return chicken;
 }
