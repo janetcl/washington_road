@@ -1,5 +1,6 @@
 const counterDOM = document.getElementById('counter');
 const endDOM = document.getElementById('end');
+const introDOM = document.getElementById('intro');
 
 const scene = new THREE.Scene();
 
@@ -42,9 +43,11 @@ let onIce = false;
 
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
-const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png").flipY;
+const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png");
+psafeTexture2.flipY = false;
 const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
-const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
+const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg");
+umatterTexture2.flipY = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -75,8 +78,6 @@ const addLane = () => {
 
 const chicken = new Chicken();
 scene.add( chicken );
-
-
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
@@ -122,7 +123,14 @@ const initializeValues = () => {
     gameEnded = false;
 }
 
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+  introDOM.style.visibility = 'hidden';
+}
+
 initializeValues();
+
+
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -768,6 +776,7 @@ document.getElementById('left').addEventListener("click", () => move('left'));
 document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
+
     if (gameEnded) return;
 
     if (event.keyCode == '38') {
