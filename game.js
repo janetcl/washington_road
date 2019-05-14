@@ -672,41 +672,6 @@ function Lane(index) {
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
             break;
         }
-        case 'train' : {
-            this.mesh = new Road();
-            this.direction = Math.random() >= 0.5;
-
-            const occupiedPositions = new Set();
-            this.vehicles = [1].map(() => {
-                const vehicle = new Train();
-                let position;
-                do {
-                    position = Math.floor(Math.random()*columns/3);
-                }while(occupiedPositions.has(position))
-                occupiedPositions.add(position);
-                vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vehicle.rotation.z = Math.PI;
-                this.mesh.add( vehicle );
-                return vehicle;
-            })
-
-            // AT
-            this.coins = [1,2].map(() => {
-                const coin = new Coin();
-                let position;
-                do {
-                    position = Math.floor(Math.random()*columns/2);
-                }while(occupiedPositions.has(position))
-                occupiedPositions.add(position);
-                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) coin.rotation.z = Math.PI;
-                this.mesh.add( coin );
-                return coin;
-            })
-
-            this.speed = 40;
-            break;
-        }
         case 'animal' : {
           this.mesh = new Grass();
           this.direction = Math.random() >= 0.5;
