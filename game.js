@@ -963,7 +963,7 @@ function animate(timestamp) {
     if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck' || lanes[currentLane].type === 'animal') {
         const chickenMinX = chicken.position.x - chickenSize*zoom/2;
         const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
-        const vechicleLength = { car: 60, truck: 105}[lanes[currentLane].type];
+        const vechicleLength = { car: 60, truck: 105, animal:60}[lanes[currentLane].type];
         lanes[currentLane].vechicles.forEach(vechicle => {
             const carMinX = vechicle.position.x - vechicleLength*zoom/2;
             const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
