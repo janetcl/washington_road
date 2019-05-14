@@ -43,9 +43,11 @@ let onIce = false;
 
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
-const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png").flipY;
+const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png");
+psafeTexture2.flipY = false;
 const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
-const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
+const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg");
+umatterTexture2.flipY = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -76,8 +78,6 @@ const addLane = () => {
 
 const chicken = new Chicken();
 scene.add( chicken );
-
-
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
@@ -670,6 +670,41 @@ function Lane(index) {
             })
 
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+            break;
+        }
+        case 'train' : {
+            this.mesh = new Road();
+            this.direction = Math.random() >= 0.5;
+
+            const occupiedPositions = new Set();
+            this.vehicles = [1].map(() => {
+                const vehicle = new Train();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/3);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vehicle.rotation.z = Math.PI;
+                this.mesh.add( vehicle );
+                return vehicle;
+            })
+
+            // AT
+            this.coins = [1,2].map(() => {
+                const coin = new Coin();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/2);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) coin.rotation.z = Math.PI;
+                this.mesh.add( coin );
+                return coin;
+            })
+
+            this.speed = 40;
             break;
         }
         case 'animal' : {
