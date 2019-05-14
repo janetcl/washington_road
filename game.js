@@ -914,7 +914,7 @@ function animate(timestamp) {
         onIce = true;
         enteredIceTimestamp = timestamp;
        }
-       if (timestamp - enteredIceTimestamp > 2.5 * 10**3) {
+       if (timestamp - enteredIceTimestamp > 5 * 10**3) {
          chicken.rotation.x = Math.PI / 2;
          gameEnded = true;
          endDOM.style.visibility = 'visible';
