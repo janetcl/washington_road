@@ -791,20 +791,24 @@ function move(direction) {
     }, {lane: currentLane, column: currentColumn})
 
     if (direction === 'forward') {
+        chicken.rotation.z = 0;
         if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return;
         if(!stepStartTimestamp) startMoving = true;
     }
     else if (direction === 'backward') {
+        chicken.rotation.z = Math.PI;
         if(finalPositions.lane === 0) return;
         if(lanes[finalPositions.lane-1].type === 'forest' && lanes[finalPositions.lane-1].occupiedPositions.has(finalPositions.column)) return;
         if(!stepStartTimestamp) startMoving = true;
     }
     else if (direction === 'left') {
+      chicken.rotation.z = Math.PI/2;
        if(finalPositions.column === 0) return;
        if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column-1)) return;
        if(!stepStartTimestamp) startMoving = true;
     }
     else if (direction === 'right') {
+      chicken.rotation.z = 3*Math.PI/2;
        if(finalPositions.column === columns - 1 ) return;
        if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column+1)) return;
        if(!stepStartTimestamp) startMoving = true;
