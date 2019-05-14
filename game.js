@@ -328,7 +328,7 @@ function Truck() {
     const color = 0x9F5919;
 
     const main = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 60*zoom, 28*zoom, 8*zoom ),
+      new THREE.BoxBufferGeometry( 80*zoom, 28*zoom, 8*zoom ),
       new THREE.MeshPhongMaterial( { color, flatShading: true, map: plankTexture } )
     );
     plankTexture.wrapS = plankTexture.wrapT = THREE.RepeatWrapping;
@@ -992,7 +992,7 @@ function animate(timestamp) {
     if(lanes[currentLane].type === 'river') {
         const chickenMinX = originalChickenX - chickenSize*zoom/2;
         const chickenMaxX = originalChickenX + chickenSize*zoom/2;
-        const vechicleLength = { car: 60, truck: 105, river: 100 }[lanes[currentLane].type];
+        const vechicleLength = 80;
         let inWater = true;
         lanes[currentLane].vechicles.forEach(vechicle => {
             const carMinX = vechicle.position.x - vechicleLength*zoom/2;
