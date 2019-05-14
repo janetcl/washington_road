@@ -83,11 +83,18 @@ const addLane = () => {
     for (let i = 0; i < laneSpeeds['hard'].length; i++) {
       laneSpeeds['hard'][0] += 0.01;
     }
-    for (let i = 0; i < plankSpeeds.length; i++) {
-      plankSpeeds[0] += 0.01;
+    for (let i = 0; i < plankSpeeds['easy'].length; i++) {
+      plankSpeeds['easy'][0] += 0.01;
+    }
+    for (let i = 0; i < plankSpeeds['medium'].length; i++) {
+      plankSpeeds['medium'][0] += 0.01;
+    }
+    for (let i = 0; i < plankSpeeds['hard'].length; i++) {
+      plankSpeeds['hard'][0] += 0.01;
     }
     const index = lanes.length;
     const lane = new Lane(index);
+    console.log(lane);
     lane.mesh.position.y = index*positionWidth*zoom;
     scene.add(lane.mesh);
     lanes.push(lane);
@@ -107,10 +114,10 @@ const truckTextures2 = [psafeTexture2, umatterTexture2];
 const threeHeights = [20,45,60];
 
 const initializeValues = () => {
-    laneSpeeds = {'easy': [1, 1.5, 2, 3], 'medium': [2, 2.5, 3, 4, 5, 6], 'hard': [3, 3.5, 4, 6, 9]}
-    plankSpeeds = [1, 2, 3, 4, 5, 6, 7];
+    laneSpeeds = {'easy': [1, 1.5, 2, 3], 'medium': [2, 2.5, 3, 4, 5, 6], 'hard': [3, 3.5, 4.5, 6, 9]}
+    plankSpeeds = {'easy': [2.5, 3.5, 4, 5], 'medium': [3.5, 4.5, 5.5, 6.5], 'hard': [4, 5, 6.5, 8.5]};
 
-    lanes = generateLanes()
+    lanes = generateLanes();
     var listener = new THREE.AudioListener();
     camera.add( listener );
     washingtonRoadSound = new THREE.Audio( listener );
@@ -610,9 +617,73 @@ function Grass() {
     return grass;
 }
 
+// array of 6 integers
+function randomInProb(array) {
+    let total = 0;
+    let newArray = [];
+    for (let i = 0; i < array.length; i++) {
+      total += array[i];
+      newArray.push(total);
+    }
+    let randomNum = Math.random()*total;
+    if (randomNum > newArray[4]) return 5;
+    if (randomNum > newArray[3]) return 4;
+    if (randomNum > newArray[2]) return 3;
+    if (randomNum > newArray[1]) return 2;
+    if (randomNum > newArray[0]) return 1;
+    return 0;
+}
+
 function Lane(index) {
     this.index = index;
-    this.type = index <= 0 ? 'field' : laneTypes[Math.floor(Math.random()*laneTypes.length)];
+    if (index <= 0)
+      this.type = 'field';
+    else if (index < 10)
+      this.type = laneTypes[Math.floor(Math.random()*laneTypes.length)];
+    else {
+      if (difficulty == 'easy') {
+        if (lanes[lanes.length-1].type == 'forest')
+          this.type = laneTypes[randomInProb([10, 5, Math.max(0, 80-0.1*index), 15, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'car')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(0, 150-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'truck')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(0, 150-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'river')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 50, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'ice')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 100-0.1*index), 20, 20, 10])]
+        else if (lanes[lanes.length-1].type == 'animal')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 20, 5, 10])]
+      }
+      else if (difficulty == 'medium') {
+        if (lanes[lanes.length-1].type == 'forest')
+          this.type = laneTypes[randomInProb([10, 5, Math.max(10, 80-0.1*index), 15, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'car')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 70-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'truck')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 70-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'river')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 50, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'ice')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 20, 20, 10])]
+        else if (lanes[lanes.length-1].type == 'animal')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 20, 5, 10])]
+      }
+      else if (difficulty == 'hard') {
+        if (lanes[lanes.length-1].type == 'forest')
+          this.type = laneTypes[randomInProb([10, 5, Math.max(10, 20-0.1*index), 15, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'car')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 30-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'truck')
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 30-0.1*index), 20, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'river')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 50, 10, 10])]
+        else if (lanes[lanes.length-1].type == 'ice')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 20, 20, 10])]
+        else if (lanes[lanes.length-1].type == 'animal')
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 20, 5, 10])]
+      }
+    }
 
     switch(this.type) {
         case 'field': {
@@ -730,7 +801,7 @@ function Lane(index) {
                 return vehicle;
             })
 
-            this.speed = plankSpeeds[Math.floor(Math.random()*plankSpeeds.length)];
+            this.speed = plankSpeeds[difficulty][Math.floor(Math.random()*plankSpeeds[difficulty].length)];
             break;
         }
         case 'lava' : {
