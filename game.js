@@ -78,7 +78,7 @@ const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
 
-const initaliseValues = () => {
+const initializeValues = () => {
     lanes = generateLanes()
 
     currentLane = 0;
@@ -94,6 +94,8 @@ const initaliseValues = () => {
 
     chicken.position.x = 0;
     chicken.position.y = 0;
+    chicken.rotation.x = 0;
+    chicken.rotation.y = 0;
 
     camera.position.y = initialCameraPositionY;
     camera.position.x = initialCameraPositionX;
@@ -101,7 +103,7 @@ const initaliseValues = () => {
     gameEnded = false;
 }
 
-initaliseValues();
+initializeValues();
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -749,7 +751,7 @@ function Lane(index) {
 
 document.querySelector("#retry").addEventListener("click", () => {
     lanes.forEach(lane => scene.remove( lane.mesh ));
-    initaliseValues();
+    initializeValues();
     endDOM.style.visibility = 'hidden';
 });
 
@@ -843,6 +845,7 @@ function animate(timestamp) {
 
     requestAnimationFrame( animate );
 
+
     let originalChickenX = chicken.position.x;
 
     // Camera motion
@@ -912,6 +915,7 @@ function animate(timestamp) {
         enteredIceTimestamp = timestamp;
        }
        if (timestamp - enteredIceTimestamp > 2.5 * 10**3) {
+         chicken.rotation.x = Math.PI / 2;
          gameEnded = true;
          endDOM.style.visibility = 'visible';
        }
@@ -1016,6 +1020,7 @@ function animate(timestamp) {
             const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
                 gameEnded = true;
+                chicken.rotation.x = Math.PI / 2;
                 endDOM.style.visibility = 'visible';
             }
         });
@@ -1049,6 +1054,7 @@ function animate(timestamp) {
             }
         });
         if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
+            chicken.rotation.y = Math.PI / 2;
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
@@ -1061,6 +1067,7 @@ function animate(timestamp) {
     frustum.setFromMatrix( cameraViewProjectionMatrix );
     // frustum is now ready to check all the objects you need
     if (!frustum.containsPoint(chicken.position)) {
+      chicken.rotation.x = Math.PI / 2;
       gameEnded = true;
       endDOM.style.visibility = 'visible';
     }
