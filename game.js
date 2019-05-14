@@ -76,16 +76,6 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-var listener = new THREE.AudioListener();
-camera.add( listener );
-var washingtonSound = new THREE.Audio( listener );
-var washingtonLoader = new THREE.AudioLoader();
-washingtonLoader.load( 'sounds/washington.mp3', function( buffer ) {
-	washingtonSound.setBuffer( buffer );
-	washingtonSound.setLoop( false );
-	washingtonSound.setVolume( 0.5 );
-	washingtonSound.play();
-});
 
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
@@ -99,6 +89,16 @@ const threeHeights = [20,45,60];
 
 const initializeValues = () => {
     lanes = generateLanes()
+    var listener = new THREE.AudioListener();
+    camera.add( listener );
+    var washingtonSound = new THREE.Audio( listener );
+    var washingtonLoader = new THREE.AudioLoader();
+    washingtonLoader.load( 'sounds/washington.mp3', function( buffer ) {
+    	washingtonSound.setBuffer( buffer );
+    	washingtonSound.setLoop( false );
+    	washingtonSound.setVolume( 0.5 );
+    	washingtonSound.play();
+    });
 
     currentLane = 0;
     currentColumn = Math.floor(columns/2);
@@ -311,59 +311,6 @@ function Truck() {
     return truck;
   }
 
-  function Train() {
-      const truck = new THREE.Group();
-      const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
-
-
-      const base = new THREE.Mesh(
-          new THREE.BoxBufferGeometry( 100*zoom, 25*zoom, 5*zoom ),
-          new THREE.MeshLambertMaterial( { color: 0xb4c6fc, flatShading: true } )
-      );
-      base.position.z = 10*zoom;
-      truck.add(base)
-
-      const cargo = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( 400*zoom, 35*zoom, 40*zoom ),
-        new THREE.MeshPhongMaterial( { color: 0xb4c6fc, flatShading: true } )
-      );
-      cargo.position.x = 15*zoom;
-      cargo.position.z = 30*zoom;
-      cargo.castShadow = true;
-      cargo.receiveShadow = true;
-      truck.add(cargo)
-
-      const cabin = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( 25*zoom, 30*zoom, 30*zoom ),
-        [
-          new THREE.MeshPhongMaterial( { color, flatShading: true } ), // back
-          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckFrontTexture } ),
-          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckRightSideTexture } ),
-          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckLeftSideTexture } ),
-          new THREE.MeshPhongMaterial( { color, flatShading: true } ), // top
-          new THREE.MeshPhongMaterial( { color, flatShading: true } ) // bottom
-        ]
-      );
-      cabin.position.x = -40*zoom;
-      cabin.position.z = 20*zoom;
-      cabin.castShadow = true;
-      cabin.receiveShadow = true;
-      truck.add( cabin );
-
-      const frontWheel = new Wheel();
-      frontWheel.position.x = -38*zoom;
-      truck.add( frontWheel );
-
-      const middleWheel = new Wheel();
-      middleWheel.position.x = -10*zoom;
-      truck.add( middleWheel );
-
-      const backWheel = new Wheel();
-      backWheel.position.x = 30*zoom;
-      truck.add( backWheel );
-
-      return truck;
-    }
 
   function Plank() {
     const car = new THREE.Group();
@@ -1060,16 +1007,6 @@ function animate(timestamp) {
             const carMinX = vehicle.position.x - vehicleLength*zoom/2;
             const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
-                var listener = new THREE.AudioListener();
-                camera.add( listener );
-                var washingtonSound = new THREE.Audio( listener );
-                var washingtonLoader = new THREE.AudioLoader();
-                washingtonLoader.load( 'sounds/scream.mp3', function( buffer ) {
-                  washingtonSound.setBuffer( buffer );
-                  washingtonSound.setLoop( false );
-                  washingtonSound.setVolume( 0.2 );
-                  washingtonSound.play();
-                });
                 gameEnded = true;
                 chicken.rotation.x = Math.PI / 2;
                 endDOM.style.visibility = 'visible';
@@ -1117,16 +1054,6 @@ function animate(timestamp) {
         if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
             chicken.rotation.y = Math.PI / 2;
             chicken.position.z = 1*zoom;
-            var listener = new THREE.AudioListener();
-            camera.add( listener );
-            var washingtonSound = new THREE.Audio( listener );
-            var washingtonLoader = new THREE.AudioLoader();
-            washingtonLoader.load( 'sounds/water.mp3', function( buffer ) {
-              washingtonSound.setBuffer( buffer );
-              washingtonSound.setLoop( false );
-              washingtonSound.setVolume( 0.2 );
-              washingtonSound.play();
-            });
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
