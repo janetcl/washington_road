@@ -40,10 +40,8 @@ let coinCount = 0;
 let enteredIceTimestamp = 0;
 let onIce = false;
 
-var plankTexture = new THREE.TextureLoader().load( "textures/wood.jpg" );
-// plankTexture.wrapS = THREE.RepeatWrapping;
-// plankTexture.wrapT = THREE.RepeatWrapping;
-// plankTexture.repeat.set( 2, 1);
+var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
+
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -276,13 +274,8 @@ function Truck() {
     const color = 0x9F5919;
 
     const main = new THREE.Mesh(
-<<<<<<< HEAD
-      new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 5*zoom ),
+      new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 10*zoom ),
       new THREE.MeshPhongMaterial( { color, flatShading: true, map: plankTexture } )
-=======
-      new THREE.BoxBufferGeometry( 100*zoom, 30*zoom, 10*zoom ),
-      new THREE.MeshPhongMaterial( { color, flatShading: true } )
->>>>>>> d98b318b02ba300fbc98306447e63d9796e77622
     );
     plankTexture.wrapS = plankTexture.wrapT = THREE.RepeatWrapping;
     main.position.z = 0*zoom;
