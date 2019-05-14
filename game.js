@@ -578,7 +578,7 @@ function Grass() {
         new THREE.MeshPhongMaterial( { color } )
     );
 
-    const middle = createSection(0xbaf455);
+    const middle = createSection(0xB5FE6C);
     middle.receiveShadow = true;
     grass.add(middle);
 
