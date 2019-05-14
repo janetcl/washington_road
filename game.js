@@ -75,7 +75,7 @@ scene.add( chicken );
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
-const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
+const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
 
 const initaliseValues = () => {
@@ -173,7 +173,7 @@ function Coin() {
 
 function Car() {
   const car = new THREE.Group();
-  const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+  const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 
   const main = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 15*zoom ),
@@ -217,7 +217,7 @@ function Car() {
 
 function Truck() {
     const truck = new THREE.Group();
-    const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+    const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 
 
     const base = new THREE.Mesh(
@@ -271,7 +271,7 @@ function Truck() {
 
   function Train() {
       const truck = new THREE.Group();
-      const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+      const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 
 
       const base = new THREE.Mesh(
@@ -376,7 +376,7 @@ function Chicken() {
       new THREE.BoxBufferGeometry( 5*zoom, 5*zoom, 12*zoom ),
       new THREE.MeshPhongMaterial( { color: 0x0E5097, flatShading: true } )
     );
-    rightLeg.position.z = 8*zoom;
+    rightLeg.position.z = 7*zoom;
     rightLeg.position.x = 4*zoom;
     rightLeg.castShadow = true;
     rightLeg.receiveShadow = true;
@@ -387,17 +387,17 @@ function Chicken() {
       new THREE.BoxBufferGeometry( 5*zoom, 5*zoom, 12*zoom ),
       new THREE.MeshPhongMaterial( { color: 0x0E5097, flatShading: true } )
     );
-    leftLeg.position.z = 8*zoom;
+    leftLeg.position.z = 7*zoom;
     leftLeg.position.x = -4*zoom;
     leftLeg.castShadow = true;
     leftLeg.receiveShadow = true;
     chicken.add(leftLeg);
 
     const body = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 15*zoom, 10*zoom, 18*zoom ),
+      new THREE.BoxBufferGeometry( 15*zoom, 9*zoom, 18*zoom ),
       new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
     );
-    body.position.z = 23*zoom;
+    body.position.z = 22*zoom;
     body.castShadow = true;
     body.receiveShadow = true;
     chicken.add(body);
@@ -406,7 +406,7 @@ function Chicken() {
       new THREE.BoxBufferGeometry( 4*zoom, 4*zoom, 11*zoom ),
       new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
     );
-    leftArm.position.z = 26*zoom;
+    leftArm.position.z = 25*zoom;
     leftArm.position.x = -9*zoom;
     leftArm.castShadow = true;
     leftArm.receiveShadow = true;
@@ -416,7 +416,7 @@ function Chicken() {
       new THREE.BoxBufferGeometry( 4*zoom, 4*zoom, 11*zoom ),
       new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
     );
-    rightArm.position.z = 26*zoom;
+    rightArm.position.z = 25*zoom;
     rightArm.position.x = 9*zoom;
     rightArm.castShadow = true;
     rightArm.receiveShadow = true;
@@ -426,7 +426,7 @@ function Chicken() {
         new THREE.BoxBufferGeometry( 8*zoom, 8*zoom, 8*zoom ),
         new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } )
     );
-    head.position.z = 35*zoom;
+    head.position.z = 34*zoom;
     head.castShadow = true;
     head.receiveShadow = false;
     chicken.add(head);
@@ -588,17 +588,17 @@ function Lane(index) {
             this.direction = Math.random() >= 0.5;
 
             const occupiedPositions = new Set();
-            this.vechicles = [1,2,3].map(() => {
-                const vechicle = new Car();
+            this.vehicles = [1,2,3].map(() => {
+                const vehicle = new Car();
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns/2);
                 }while(occupiedPositions.has(position))
                 occupiedPositions.add(position);
-                vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vechicle.rotation.z = Math.PI;
-                this.mesh.add( vechicle );
-                return vechicle;
+                vehicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vehicle.rotation.z = Math.PI;
+                this.mesh.add( vehicle );
+                return vehicle;
             })
             // AT
             this.coins = [1,2].map(() => {
@@ -622,17 +622,17 @@ function Lane(index) {
             this.direction = Math.random() >= 0.5;
 
             const occupiedPositions = new Set();
-            this.vechicles = [1,2].map(() => {
-                const vechicle = new Truck();
+            this.vehicles = [1,2].map(() => {
+                const vehicle = new Truck();
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns/3);
                 }while(occupiedPositions.has(position))
                 occupiedPositions.add(position);
-                vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vechicle.rotation.z = Math.PI;
-                this.mesh.add( vechicle );
-                return vechicle;
+                vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vehicle.rotation.z = Math.PI;
+                this.mesh.add( vehicle );
+                return vehicle;
             })
 
             // AT
@@ -658,17 +658,17 @@ function Lane(index) {
             this.direction = Math.random() >= 0.5;
 
             const occupiedPositions = new Set();
-            this.vechicles = [1,2,3].map(() => {
-                const vechicle = new Plank();
+            this.vehicles = [1,2,3].map(() => {
+                const vehicle = new Plank();
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns/2);
                 }while(occupiedPositions.has(position))
                 occupiedPositions.add(position);
-                vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vechicle.rotation.z = Math.PI;
-                this.mesh.add( vechicle );
-                return vechicle;
+                vehicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vehicle.rotation.z = Math.PI;
+                this.mesh.add( vehicle );
+                return vehicle;
             })
 
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
@@ -679,17 +679,17 @@ function Lane(index) {
             this.direction = Math.random() >= 0.5;
 
             const occupiedPositions = new Set();
-            this.vechicles = [1].map(() => {
-                const vechicle = new Train();
+            this.vehicles = [1].map(() => {
+                const vehicle = new Train();
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns/3);
                 }while(occupiedPositions.has(position))
                 occupiedPositions.add(position);
-                vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vechicle.rotation.z = Math.PI;
-                this.mesh.add( vechicle );
-                return vechicle;
+                vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vehicle.rotation.z = Math.PI;
+                this.mesh.add( vehicle );
+                return vehicle;
             })
 
             // AT
@@ -714,17 +714,17 @@ function Lane(index) {
           this.direction = Math.random() >= 0.5;
 
           const occupiedPositions = new Set();
-          this.vechicles = [1].map(() => {
-              const vechicle = new Car();
+          this.vehicles = [1].map(() => {
+              const vehicle = new Car();
               let position;
               do {
                   position = Math.floor(Math.random()*columns/3);
               }while(occupiedPositions.has(position))
               occupiedPositions.add(position);
-              vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
-              if(!this.direction) vechicle.rotation.z = Math.PI;
-              this.mesh.add( vechicle );
-              return vechicle;
+              vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+              if(!this.direction) vehicle.rotation.z = Math.PI;
+              this.mesh.add( vehicle );
+              return vehicle;
           })
 
           // AT
@@ -864,24 +864,26 @@ function animate(timestamp) {
     const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
     lanes.forEach(lane => {
         if(lane.type === 'car' || lane.type === 'truck' || lane.type === 'river' || lane.type === 'animal') {
-            lane.vechicles.forEach(vechicle => {
+            lane.vehicles.forEach(vehicle => {
                 if(lane.direction) {
-                    vechicle.position.x = vechicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vechicle.position.x -= lane.speed/16*delta;
+                    vehicle.position.x = vehicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vehicle.position.x -= lane.speed/16*delta;
                 }else{
-                    vechicle.position.x = vechicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vechicle.position.x += lane.speed/16*delta;
+                    vehicle.position.x = vehicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vehicle.position.x += lane.speed/16*delta;
                 }
             });
         }
         if (lane.type === 'animal') {
-          lane.vechicles.forEach(vechicle => {
-            if (vechicle.position.x >= 714 || vechicle.position.x <= -714) {
+          lane.vehicles.forEach(vehicle => {
+            if (vehicle.position.x >= 714 || vehicle.position.x <= -714) {
               lane.direction = !lane.direction;
-              if (!lane.direction) vechicle.rotation.z = Math.PI;
-              else vechicle.rotation.z = 0;
+              if (!lane.direction) vehicle.rotation.z = Math.PI;
+              else vehicle.rotation.z = 0;
             }
           });
         }
     });
+
+
 
     // Animate planks and chicken and camera moving on lane
     if (lanes[currentLane].type === 'river') {
@@ -1004,10 +1006,10 @@ function animate(timestamp) {
     if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck' || lanes[currentLane].type === 'animal') {
         const chickenMinX = chicken.position.x - chickenSize*zoom/2;
         const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
-        const vechicleLength = { car: 60, truck: 105, animal:60}[lanes[currentLane].type];
-        lanes[currentLane].vechicles.forEach(vechicle => {
-            const carMinX = vechicle.position.x - vechicleLength*zoom/2;
-            const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
+        const vehicleLength = { car: 60, truck: 105, animal:60}[lanes[currentLane].type];
+        lanes[currentLane].vehicles.forEach(vehicle => {
+            const carMinX = vehicle.position.x - vehicleLength*zoom/2;
+            const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
                 gameEnded = true;
                 endDOM.style.visibility = 'visible';
@@ -1033,11 +1035,11 @@ function animate(timestamp) {
     if(lanes[currentLane].type === 'river') {
         const chickenMinX = originalChickenX - chickenSize*zoom/2;
         const chickenMaxX = originalChickenX + chickenSize*zoom/2;
-        const vechicleLength = 80;
+        const vehicleLength = 80;
         let inWater = true;
-        lanes[currentLane].vechicles.forEach(vechicle => {
-            const carMinX = vechicle.position.x - vechicleLength*zoom/2;
-            const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
+        lanes[currentLane].vehicles.forEach(vehicle => {
+            const carMinX = vehicle.position.x - vehicleLength*zoom/2;
+            const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX >= carMinX && chickenMinX <= carMaxX) {
                 inWater = false;
             }
