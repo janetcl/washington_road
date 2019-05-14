@@ -862,19 +862,19 @@ document.querySelector("#retry").addEventListener("click", () => {
 
 window.addEventListener("keydown", event => {
 
-    if (event.keyCode == '38' && gameStarted) {
+    if (event.keyCode == '38' && gameStarted && !gameEnded) {
         // up arrow
         move('forward');
     }
-    else if (event.keyCode == '40' && gameStarted) {
+    else if (event.keyCode == '40' && gameStarted && !gameEnded) {
         // down arrow
         move('backward');
     }
-    else if (event.keyCode == '37' && gameStarted) {
+    else if (event.keyCode == '37' && gameStarted && !gameEnded) {
        // left arrow
        move('left');
     }
-    else if (event.keyCode == '39' && gameStarted) {
+    else if (event.keyCode == '39' && gameStarted && !gameEnded) {
        // right arrow
        move('right');
     }
