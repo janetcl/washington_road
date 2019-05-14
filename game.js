@@ -43,6 +43,8 @@ let onIce = false;
 let gameStarted = false;
 let difficulty;
 let washingtonRoadSound;
+let laneSpeeds;
+let plankSpeeds;
 
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
@@ -72,6 +74,18 @@ const generateLanes = () => [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9].map
 }).filter((lane) => lane.index >= 0);
 
 const addLane = () => {
+    for (let i = 0; i < laneSpeeds['easy'].length; i++) {
+      laneSpeeds['easy'][0] += 0.01;
+    }
+    for (let i = 0; i < laneSpeeds['medium'].length; i++) {
+      laneSpeeds['medium'][0] += 0.01;
+    }
+    for (let i = 0; i < laneSpeeds['hard'].length; i++) {
+      laneSpeeds['hard'][0] += 0.01;
+    }
+    for (let i = 0; i < plankSpeeds.length; i++) {
+      plankSpeeds[0] += 0.01;
+    }
     const index = lanes.length;
     const lane = new Lane(index);
     lane.mesh.position.y = index*positionWidth*zoom;
@@ -85,7 +99,6 @@ scene.add( chicken );
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const difficultyTypes = ['easy', 'medium', 'hard'];
-const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const truckColors = [0xffffff, 0xb4c6fc];
 const truckTextures = [psafeTexture, umatterTexture];
@@ -94,6 +107,9 @@ const truckTextures2 = [psafeTexture2, umatterTexture2];
 const threeHeights = [20,45,60];
 
 const initializeValues = () => {
+    laneSpeeds = {'easy': [1, 1.5, 2, 3], 'medium': [2, 2.5, 3, 4, 5, 6], 'hard': [3, 3.5, 4, 6, 9]}
+    plankSpeeds = [1, 2, 3, 4, 5, 6, 7];
+
     lanes = generateLanes()
     var listener = new THREE.AudioListener();
     camera.add( listener );
@@ -105,6 +121,8 @@ const initializeValues = () => {
     	washingtonRoadSound.setVolume( 0.5 );
     	washingtonRoadSound.play();
     });
+
+
 
     currentLane = 0;
     currentColumn = Math.floor(columns/2);
@@ -655,7 +673,7 @@ function Lane(index) {
                 return coin;
             })
 
-            this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+            this.speed = laneSpeeds[difficulty][Math.floor(Math.random()*laneSpeeds[difficulty].length)];
             break;
         }
         case 'truck' : {
@@ -690,7 +708,7 @@ function Lane(index) {
                 return coin;
             })
 
-            this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+            this.speed = laneSpeeds[difficulty][Math.floor(Math.random()*laneSpeeds[difficulty].length)];
             break;
         }
         case 'river' : {
@@ -712,7 +730,7 @@ function Lane(index) {
                 return vehicle;
             })
 
-            this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+            this.speed = plankSpeeds[Math.floor(Math.random()*plankSpeeds.length)];
             break;
         }
         case 'lava' : {
@@ -753,7 +771,7 @@ function Lane(index) {
               return coin;
           })
 
-          this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+          this.speed = laneSpeeds[difficulty][Math.floor(Math.random()*laneSpeeds[difficulty].length)];
           break;
         }
     }
@@ -873,6 +891,7 @@ function toScreenPosition(obj, camera)
 var prevPosition = 0;
 
 function animate(timestamp) {
+
     requestAnimationFrame( animate );
 
     if (!gameStarted) return;
