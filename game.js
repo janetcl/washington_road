@@ -73,7 +73,7 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'train'];
+const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
@@ -668,6 +668,41 @@ function Lane(index) {
             this.speed = 40;
             break;
         }
+        case 'animal' : {
+          this.mesh = new Grass();
+          this.direction = Math.random() >= 0.5;
+
+          const occupiedPositions = new Set();
+          this.vechicles = [1].map(() => {
+              const vechicle = new Car();
+              let position;
+              do {
+                  position = Math.floor(Math.random()*columns/3);
+              }while(occupiedPositions.has(position))
+              occupiedPositions.add(position);
+              vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+              if(!this.direction) vechicle.rotation.z = Math.PI;
+              this.mesh.add( vechicle );
+              return vechicle;
+          })
+
+          // AT
+          this.coins = [1,2].map(() => {
+              const coin = new Coin();
+              let position;
+              do {
+                  position = Math.floor(Math.random()*columns/2);
+              }while(occupiedPositions.has(position))
+              occupiedPositions.add(position);
+              coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+              if(!this.direction) coin.rotation.z = Math.PI;
+              this.mesh.add( coin );
+              return coin;
+          })
+
+          this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+          break;
+        }
     }
 }
 
@@ -787,7 +822,7 @@ function animate(timestamp) {
     const aBitBeforeTheBeginingOfLane = -boardWidth*zoom/2 - positionWidth*2*zoom;
     const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
     lanes.forEach(lane => {
-        if(lane.type === 'car' || lane.type === 'truck' || lane.type === 'river') {
+        if(lane.type === 'car' || lane.type === 'truck' || lane.type === 'river' || lane.type === 'animal') {
             lane.vechicles.forEach(vechicle => {
                 if(lane.direction) {
                     vechicle.position.x = vechicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vechicle.position.x -= lane.speed/16*delta;
@@ -795,6 +830,15 @@ function animate(timestamp) {
                     vechicle.position.x = vechicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vechicle.position.x += lane.speed/16*delta;
                 }
             });
+        }
+        if (lane.type === 'animal') {
+          lane.vechicles.forEach(vechicle => {
+            if (vechicle.position.x >= 714 || vechicle.position.x <= -714) {
+              lane.direction = !lane.direction;
+              if(!this.direction) vechicle.rotation.z = Math.PI;
+              else vechicle.rotation.z = 0;
+            }
+          });
         }
     });
 
@@ -916,7 +960,7 @@ function animate(timestamp) {
     }
 
     // Hit test
-    if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
+    if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck' || lanes[currentLane].type === 'animal') {
         const chickenMinX = chicken.position.x - chickenSize*zoom/2;
         const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
         const vechicleLength = { car: 60, truck: 105}[lanes[currentLane].type];
