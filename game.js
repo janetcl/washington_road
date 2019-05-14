@@ -721,9 +721,14 @@ function Lane(index) {
             this.vehicles = [1,2,3].map(() => {
                 const vehicle = new Car();
                 let position;
+                let good;
                 do {
                     position = Math.floor(Math.random()*columns/2);
-                }while(occupiedPositions.has(position))
+                    good = true;
+                    for (let item of occupiedPositions) {
+                      if (Math.abs(item - position) <= 1) good = false;
+                    }
+                }while(occupiedPositions.has(position) || !good)
                 occupiedPositions.add(position);
                 vehicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
                 if(!this.direction) vehicle.rotation.z = Math.PI;
@@ -755,9 +760,14 @@ function Lane(index) {
             this.vehicles = [1,2].map(() => {
                 const vehicle = new Truck();
                 let position;
+                let good;
                 do {
                     position = Math.floor(Math.random()*columns/3);
-                }while(occupiedPositions.has(position))
+                    good = true;
+                    for (let item of occupiedPositions) {
+                      if (Math.abs(item - position) <= 1) good = false;
+                    }
+                }while(occupiedPositions.has(position) || !good)
                 occupiedPositions.add(position);
                 vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
                 if(!this.direction) vehicle.rotation.z = Math.PI;
