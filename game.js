@@ -835,7 +835,7 @@ function animate(timestamp) {
           lane.vechicles.forEach(vechicle => {
             if (vechicle.position.x >= 714 || vechicle.position.x <= -714) {
               lane.direction = !lane.direction;
-              if(!this.direction) vechicle.rotation.z = Math.PI;
+              if (!lane.direction) vechicle.rotation.z = Math.PI;
               else vechicle.rotation.z = 0;
             }
           });
