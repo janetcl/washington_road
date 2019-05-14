@@ -40,6 +40,9 @@ let gameEnded;
 let coinCount = 0;
 let enteredIceTimestamp = 0;
 let onIce = false;
+let gameStarted = false;
+let difficulty;
+let washingtonRoadSound;
 
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
@@ -79,7 +82,9 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
+
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
+const difficultyTypes = ['easy', 'medium', 'hard'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const truckColors = [0xffffff, 0xb4c6fc];
@@ -92,13 +97,13 @@ const initializeValues = () => {
     lanes = generateLanes()
     var listener = new THREE.AudioListener();
     camera.add( listener );
-    var washingtonSound = new THREE.Audio( listener );
+    washingtonRoadSound = new THREE.Audio( listener );
     var washingtonLoader = new THREE.AudioLoader();
     washingtonLoader.load( 'sounds/washington.mp3', function( buffer ) {
-    	washingtonSound.setBuffer( buffer );
-    	washingtonSound.setLoop( false );
-    	washingtonSound.setVolume( 0.5 );
-    	washingtonSound.play();
+    	washingtonRoadSound.setBuffer( buffer );
+    	washingtonRoadSound.setLoop( false );
+    	washingtonRoadSound.setVolume( 0.5 );
+    	washingtonRoadSound.play();
     });
 
     currentLane = 0;
@@ -120,16 +125,9 @@ const initializeValues = () => {
     camera.position.y = initialCameraPositionY;
     camera.position.x = initialCameraPositionX;
     counterDOM.innerHTML = 0;
+    counterDOM.style.visibility = 'visible';
     gameEnded = false;
 }
-
-document.addEventListener("keydown", onDocumentKeyDown, false);
-function onDocumentKeyDown(event) {
-  introDOM.style.visibility = 'hidden';
-}
-
-initializeValues();
-
 
 
 const renderer = new THREE.WebGLRenderer({
@@ -138,7 +136,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
 document.body.appendChild( renderer.domElement );
 
 hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
@@ -763,37 +761,57 @@ function Lane(index) {
 
 document.querySelector("#retry").addEventListener("click", () => {
     lanes.forEach(lane => scene.remove( lane.mesh ));
-    initializeValues();
     endDOM.style.visibility = 'hidden';
+    document.querySelector('canvas').visibility = 'hidden';
+    introDOM.style.visibility = 'visible';
+    counterDOM.style.visibility = 'hidden';
+    gameStarted = false;
+    gameEnded = false;
+    lanes = [];
+    washingtonRoadSound.stop();
 });
-
-document.getElementById('forward').addEventListener("click", () => move('forward'));
-
-document.getElementById('backward').addEventListener("click", () => move('backward'));
-
-document.getElementById('left').addEventListener("click", () => move('left'));
-
-document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
 
-    if (gameEnded) return;
-
-    if (event.keyCode == '38') {
+    if (event.keyCode == '38' && gameStarted) {
         // up arrow
         move('forward');
     }
-    else if (event.keyCode == '40') {
+    else if (event.keyCode == '40' && gameStarted) {
         // down arrow
         move('backward');
     }
-    else if (event.keyCode == '37') {
+    else if (event.keyCode == '37' && gameStarted) {
        // left arrow
        move('left');
     }
-    else if (event.keyCode == '39') {
+    else if (event.keyCode == '39' && gameStarted) {
        // right arrow
        move('right');
+    }
+    else if (event.keyCode == '69' && !gameStarted) {
+      // easy difficulty
+        gameStarted = true;
+        difficulty = 'easy';
+        introDOM.style.visibility = 'hidden';
+        initializeValues();
+
+    }
+    else if (event.keyCode == '77' && !gameStarted) {
+      // easy difficulty
+        gameStarted = true;
+        difficulty = 'medium';
+        introDOM.style.visibility = 'hidden';
+        initializeValues();
+
+    }
+    else if (event.keyCode == '72' && !gameStarted) {
+      // easy difficulty
+        gameStarted = true;
+        difficulty = 'hard';
+        introDOM.style.visibility = 'hidden';
+        initializeValues();
+
     }
 });
 
@@ -855,10 +873,9 @@ function toScreenPosition(obj, camera)
 var prevPosition = 0;
 
 function animate(timestamp) {
-
     requestAnimationFrame( animate );
 
-
+    if (!gameStarted) return;
     let originalChickenX = chicken.position.x;
 
     // Camera motion

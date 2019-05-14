@@ -21,6 +21,7 @@ button {
   position: absolute;
   top: 20px;
   right: 20px;
+  visibility: hidden;
 }
 #intro {
   position: absolute;
