@@ -649,7 +649,7 @@ function Lane(index) {
         else if (lanes[lanes.length-1].type == 'truck')
           this.type = laneTypes[randomInProb([20, 10, Math.max(0, 150-0.1*index), 20, 10, 10])]
         else if (lanes[lanes.length-1].type == 'river')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 50, 10, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 70, 10, 10])]
         else if (lanes[lanes.length-1].type == 'ice')
           this.type = laneTypes[randomInProb([10, 10, Math.max(0, 100-0.1*index), 20, 20, 10])]
         else if (lanes[lanes.length-1].type == 'animal')
@@ -663,7 +663,7 @@ function Lane(index) {
         else if (lanes[lanes.length-1].type == 'truck')
           this.type = laneTypes[randomInProb([20, 10, Math.max(10, 70-0.1*index), 20, 10, 10])]
         else if (lanes[lanes.length-1].type == 'river')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 50, 10, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 70, 10, 10])]
         else if (lanes[lanes.length-1].type == 'ice')
           this.type = laneTypes[randomInProb([10, 10, Math.max(10, 70-0.1*index), 20, 20, 10])]
         else if (lanes[lanes.length-1].type == 'animal')
@@ -677,7 +677,7 @@ function Lane(index) {
         else if (lanes[lanes.length-1].type == 'truck')
           this.type = laneTypes[randomInProb([20, 10, Math.max(10, 30-0.1*index), 20, 10, 10])]
         else if (lanes[lanes.length-1].type == 'river')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 50, 10, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 70, 10, 10])]
         else if (lanes[lanes.length-1].type == 'ice')
           this.type = laneTypes[randomInProb([10, 10, Math.max(10, 30-0.1*index), 20, 20, 10])]
         else if (lanes[lanes.length-1].type == 'animal')
