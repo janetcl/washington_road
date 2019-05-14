@@ -40,11 +40,11 @@ let coinCount = 0;
 let enteredIceTimestamp = 0;
 let onIce = false;
 
-var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
-var psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
-var psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.jpg").flipY;
-var umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
-var umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
+const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
+const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
+const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png").flipY;
+const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
+const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -234,6 +234,16 @@ function Car() {
   car.receiveShadow = false;
 
   return car;
+}
+
+function Bagel() {
+  var geometry = new THREE.TorusGeometry( 18, 10.2, 27, 100 );
+  var material = new THREE.MeshToonMaterial( { color: 0xFCE9B0 } );
+  var bagel = new THREE.Mesh( geometry, material );
+
+  bagel.position.z = 10*zoom;
+
+  return bagel;
 }
 
 function Truck() {
@@ -488,6 +498,7 @@ function Road() {
 
     return road;
 }
+
 
 // AT: Ice layer that players die on after standing for too long.
 function Ice() {
@@ -747,7 +758,7 @@ function Lane(index) {
 
           const occupiedPositions = new Set();
           this.vehicles = [1].map(() => {
-              const vehicle = new Car();
+              const vehicle = new Bagel();
               let position;
               do {
                   position = Math.floor(Math.random()*columns/3);
@@ -1049,6 +1060,16 @@ function animate(timestamp) {
             const carMinX = vehicle.position.x - vehicleLength*zoom/2;
             const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
+                var listener = new THREE.AudioListener();
+                camera.add( listener );
+                var washingtonSound = new THREE.Audio( listener );
+                var washingtonLoader = new THREE.AudioLoader();
+                washingtonLoader.load( 'sounds/scream.mp3', function( buffer ) {
+                  washingtonSound.setBuffer( buffer );
+                  washingtonSound.setLoop( false );
+                  washingtonSound.setVolume( 0.2 );
+                  washingtonSound.play();
+                });
                 gameEnded = true;
                 chicken.rotation.x = Math.PI / 2;
                 endDOM.style.visibility = 'visible';
@@ -1096,6 +1117,16 @@ function animate(timestamp) {
         if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
             chicken.rotation.y = Math.PI / 2;
             chicken.position.z = 1*zoom;
+            var listener = new THREE.AudioListener();
+            camera.add( listener );
+            var washingtonSound = new THREE.Audio( listener );
+            var washingtonLoader = new THREE.AudioLoader();
+            washingtonLoader.load( 'sounds/water.mp3', function( buffer ) {
+              washingtonSound.setBuffer( buffer );
+              washingtonSound.setLoop( false );
+              washingtonSound.setVolume( 0.2 );
+              washingtonSound.play();
+            });
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
