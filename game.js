@@ -42,7 +42,6 @@ let onIce = false;
 
 var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 
-
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
 const carRightSideTexture = new Texture(110,40,[{x: 10, y: 0, w: 50, h: 30 }, {x: 70, y: 0, w: 30, h: 30 }]);
@@ -72,6 +71,18 @@ const addLane = () => {
 
 const chicken = new Chicken();
 scene.add( chicken );
+
+var listener = new THREE.AudioListener();
+camera.add( listener );
+var washingtonSound = new THREE.Audio( listener );
+var washingtonLoader = new THREE.AudioLoader();
+washingtonLoader.load( 'sounds/washington.mp3', function( buffer ) {
+	washingtonSound.setBuffer( buffer );
+	washingtonSound.setLoop( false );
+	washingtonSound.setVolume( 0.5 );
+	washingtonSound.play();
+});
+
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
@@ -1027,6 +1038,16 @@ function animate(timestamp) {
             const coinMinX = coin.position.x - coinLength*zoom/2;
             const coinMaxX = coin.position.x + coinLength*zoom/2;
             if(chickenMaxX > coinMinX && chickenMinX < coinMaxX) {
+                var listener = new THREE.AudioListener();
+                camera.add( listener );
+                var washingtonSound = new THREE.Audio( listener );
+                var washingtonLoader = new THREE.AudioLoader();
+                washingtonLoader.load( 'sounds/coin.wav', function( buffer ) {
+                  washingtonSound.setBuffer( buffer );
+                  washingtonSound.setLoop( false );
+                  washingtonSound.setVolume( 0.5 );
+                  washingtonSound.play();
+                });
                 coinCount = coinCount + 1;
                 lanes[currentLane].mesh.remove(coin);
                 toRemove.push(coin);
