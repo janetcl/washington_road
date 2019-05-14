@@ -41,7 +41,10 @@ let enteredIceTimestamp = 0;
 let onIce = false;
 
 var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
-
+var psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
+var psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.jpg").flipY;
+var umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
+var umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -76,6 +79,10 @@ scene.add( chicken );
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
+const truckColors = [0xffffff, 0xb4c6fc];
+const truckTextures = [psafeTexture, umatterTexture];
+const truckTextures2 = [psafeTexture2, umatterTexture2];
+
 const threeHeights = [20,45,60];
 
 const initializeValues = () => {
@@ -220,18 +227,29 @@ function Car() {
 function Truck() {
     const truck = new THREE.Group();
     const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
-
+    const truckColorVal = Math.floor(Math.random() * truckTextures.length);
+    const cargoColor = truckColors[truckColorVal];
+    const texture = truckTextures[truckColorVal];
+    const texture2 = truckTextures2[truckColorVal];
 
     const base = new THREE.Mesh(
         new THREE.BoxBufferGeometry( 100*zoom, 25*zoom, 5*zoom ),
-        new THREE.MeshLambertMaterial( { color: 0xb4c6fc, flatShading: true } )
+        new THREE.MeshLambertMaterial( { color: 0xb4c6fc, flatShading: true} )
     );
     base.position.z = 10*zoom;
     truck.add(base)
 
     const cargo = new THREE.Mesh(
       new THREE.BoxBufferGeometry( 75*zoom, 35*zoom, 40*zoom ),
-      new THREE.MeshPhongMaterial( { color: 0xb4c6fc, flatShading: true } )
+      [
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true } ), // back
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true } ),
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true, map: texture2 } ),
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true, map: texture } ),
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true } ), // top
+        new THREE.MeshPhongMaterial( { color: cargoColor, flatShading: true } ) // bottom
+      ]
+      // new THREE.MeshPhongMaterial( { color: 0xb4c6fc, flatShading: true, map: texture } )
     );
     cargo.position.x = 15*zoom;
     cargo.position.z = 30*zoom;
@@ -1055,6 +1073,7 @@ function animate(timestamp) {
         });
         if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
             chicken.rotation.y = Math.PI / 2;
+            chicken.position.z = 1*zoom;
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
