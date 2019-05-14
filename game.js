@@ -41,10 +41,13 @@ let enteredIceTimestamp = 0;
 let onIce = false;
 
 var plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
+<<<<<<< HEAD
 var psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
 var psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.jpg").flipY;
 var umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
 var umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg").flipY;
+=======
+>>>>>>> 36e68dcef5895a57ddf36cb9582489a4a6d59cb5
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -75,6 +78,18 @@ const addLane = () => {
 
 const chicken = new Chicken();
 scene.add( chicken );
+
+var listener = new THREE.AudioListener();
+camera.add( listener );
+var washingtonSound = new THREE.Audio( listener );
+var washingtonLoader = new THREE.AudioLoader();
+washingtonLoader.load( 'sounds/washington.mp3', function( buffer ) {
+	washingtonSound.setBuffer( buffer );
+	washingtonSound.setLoop( false );
+	washingtonSound.setVolume( 0.5 );
+	washingtonSound.play();
+});
+
 
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
@@ -932,7 +947,7 @@ function animate(timestamp) {
         onIce = true;
         enteredIceTimestamp = timestamp;
        }
-       if (timestamp - enteredIceTimestamp > 2.5 * 10**3) {
+       if (timestamp - enteredIceTimestamp > 5 * 10**3) {
          chicken.rotation.x = Math.PI / 2;
          gameEnded = true;
          endDOM.style.visibility = 'visible';
@@ -1050,6 +1065,16 @@ function animate(timestamp) {
             const coinMinX = coin.position.x - coinLength*zoom/2;
             const coinMaxX = coin.position.x + coinLength*zoom/2;
             if(chickenMaxX > coinMinX && chickenMinX < coinMaxX) {
+                var listener = new THREE.AudioListener();
+                camera.add( listener );
+                var washingtonSound = new THREE.Audio( listener );
+                var washingtonLoader = new THREE.AudioLoader();
+                washingtonLoader.load( 'sounds/coin.wav', function( buffer ) {
+                  washingtonSound.setBuffer( buffer );
+                  washingtonSound.setLoop( false );
+                  washingtonSound.setVolume( 0.5 );
+                  washingtonSound.play();
+                });
                 coinCount = coinCount + 1;
                 lanes[currentLane].mesh.remove(coin);
                 toRemove.push(coin);
