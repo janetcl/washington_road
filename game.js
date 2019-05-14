@@ -271,7 +271,7 @@ function Truck() {
     const color = 0x9F5919;
 
     const main = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 100*zoom, 30*zoom, 5*zoom ),
+      new THREE.BoxBufferGeometry( 100*zoom, 30*zoom, 10*zoom ),
       new THREE.MeshPhongMaterial( { color, flatShading: true } )
     );
     main.position.z = 0*zoom;
@@ -732,12 +732,12 @@ function animate(timestamp) {
       if(lanes[currentLane].direction) {
           chicken.position.x = chicken.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : chicken.position.x -= lanes[currentLane].speed/16*delta;
           prevPosition = prevPosition < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : prevPosition -= lanes[currentLane].speed/16*delta;
-          camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x -= lanes[currentLane].speed/16*delta;
+          if (!gameEnded) camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x -= lanes[currentLane].speed/16*delta;
       }
       else{
           chicken.position.x = chicken.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : chicken.position.x += lanes[currentLane].speed/16*delta;
           prevPosition = prevPosition < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : prevPosition += lanes[currentLane].speed/16*delta;
-          camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x += lanes[currentLane].speed/16*delta;
+          if (!gameEnded) camera.position.x = camera.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : camera.position.x += lanes[currentLane].speed/16*delta;
       }
       currentColumn = Math.round((chicken.position.x + 672) / 84);
     }
@@ -886,12 +886,7 @@ function animate(timestamp) {
                 inWater = false;
             }
         });
-        if (inWater) {
-            console.log("death in water")
-            console.log(chickenMaxX)
-            console.log(chickenMinX)
-            console.log(lanes[currentLane].vechicles)
-            console.log(lanes[currentLane])
+        if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
@@ -907,7 +902,6 @@ function animate(timestamp) {
       gameEnded = true;
       endDOM.style.visibility = 'visible';
     }
-
 
     renderer.render( scene, camera );
 }
