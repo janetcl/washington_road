@@ -1,5 +1,6 @@
 const counterDOM = document.getElementById('counter');
 const endDOM = document.getElementById('end');
+const introDOM = document.getElementById('intro');
 
 const scene = new THREE.Scene();
 
@@ -122,7 +123,14 @@ const initializeValues = () => {
     gameEnded = false;
 }
 
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+  introDOM.style.visibility = 'hidden';
+}
+
 initializeValues();
+
+
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -805,6 +813,7 @@ document.getElementById('left').addEventListener("click", () => move('left'));
 document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
+
     if (gameEnded) return;
 
     if (event.keyCode == '38') {
@@ -1060,16 +1069,6 @@ function animate(timestamp) {
             const carMinX = vehicle.position.x - vehicleLength*zoom/2;
             const carMaxX = vehicle.position.x + vehicleLength*zoom/2;
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
-                var listener = new THREE.AudioListener();
-                camera.add( listener );
-                var washingtonSound = new THREE.Audio( listener );
-                var washingtonLoader = new THREE.AudioLoader();
-                washingtonLoader.load( 'sounds/scream.mp3', function( buffer ) {
-                  washingtonSound.setBuffer( buffer );
-                  washingtonSound.setLoop( false );
-                  washingtonSound.setVolume( 0.2 );
-                  washingtonSound.play();
-                });
                 gameEnded = true;
                 chicken.rotation.x = Math.PI / 2;
                 endDOM.style.visibility = 'visible';
@@ -1117,16 +1116,6 @@ function animate(timestamp) {
         if (inWater || chicken.position.x >= 714 || chickenMinX <= -714) {
             chicken.rotation.y = Math.PI / 2;
             chicken.position.z = 1*zoom;
-            var listener = new THREE.AudioListener();
-            camera.add( listener );
-            var washingtonSound = new THREE.Audio( listener );
-            var washingtonLoader = new THREE.AudioLoader();
-            washingtonLoader.load( 'sounds/water.mp3', function( buffer ) {
-              washingtonSound.setBuffer( buffer );
-              washingtonSound.setLoop( false );
-              washingtonSound.setVolume( 0.2 );
-              washingtonSound.play();
-            });
             gameEnded = true;
             endDOM.style.visibility = 'visible';
         }
