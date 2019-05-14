@@ -328,7 +328,7 @@ function Truck() {
     const color = 0x9F5919;
 
     const main = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 10*zoom ),
+      new THREE.BoxBufferGeometry( 60*zoom, 28*zoom, 8*zoom ),
       new THREE.MeshPhongMaterial( { color, flatShading: true, map: plankTexture } )
     );
     plankTexture.wrapS = plankTexture.wrapT = THREE.RepeatWrapping;
@@ -422,18 +422,18 @@ function Ice() {
 
     const createSection = color => new THREE.Mesh(
         new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
-        new THREE.MeshPhongMaterial( { color } )
+        new THREE.MeshPhongMaterial( { color, shininess: 50, reflectivity: 1.0 } )
     );
 
-    const middle = createSection(0xffffff);
+    const middle = createSection(0xCEF4FF);
     middle.receiveShadow = true;
     ice.add(middle);
 
-    const left = createSection(0xd3d3d3);
+    const left = createSection(0xCEF4FF);
     left.position.x = - boardWidth*zoom;
     ice.add(left);
 
-    const right = createSection(0xd3d3d3);
+    const right = createSection(0xCEF4FF);
     right.position.x = boardWidth*zoom;
     ice.add(right);
 
@@ -471,15 +471,15 @@ function Water() {
         new THREE.MeshPhongMaterial( { color } )
     );
 
-    const middle = createSection(0xADD8E6);
+    const middle = createSection(0x71D4FF);
     middle.receiveShadow = true;
     water.add(middle);
 
-    const left = createSection(0x72BCD4);
+    const left = createSection(0x37BFFF);
     left.position.x = - boardWidth*zoom;
     water.add(left);
 
-    const right = createSection(0x72BCD4);
+    const right = createSection(0x37BFFF);
     right.position.x = boardWidth*zoom;
     water.add(right);
 
