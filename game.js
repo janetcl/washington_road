@@ -73,7 +73,7 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-const laneTypes = ['car', 'truck', 'forest', 'river', 'ice'];
+const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'train'];
 const laneSpeeds = [2, 2.5, 3, 5, 7];
 const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
 const threeHeights = [20,45,60];
@@ -268,6 +268,60 @@ function Truck() {
 
     return truck;
   }
+
+  function Train() {
+      const truck = new THREE.Group();
+      const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+
+
+      const base = new THREE.Mesh(
+          new THREE.BoxBufferGeometry( 100*zoom, 25*zoom, 5*zoom ),
+          new THREE.MeshLambertMaterial( { color: 0xb4c6fc, flatShading: true } )
+      );
+      base.position.z = 10*zoom;
+      truck.add(base)
+
+      const cargo = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( 400*zoom, 35*zoom, 40*zoom ),
+        new THREE.MeshPhongMaterial( { color: 0xb4c6fc, flatShading: true } )
+      );
+      cargo.position.x = 15*zoom;
+      cargo.position.z = 30*zoom;
+      cargo.castShadow = true;
+      cargo.receiveShadow = true;
+      truck.add(cargo)
+
+      const cabin = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( 25*zoom, 30*zoom, 30*zoom ),
+        [
+          new THREE.MeshPhongMaterial( { color, flatShading: true } ), // back
+          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckFrontTexture } ),
+          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckRightSideTexture } ),
+          new THREE.MeshPhongMaterial( { color, flatShading: true, map: truckLeftSideTexture } ),
+          new THREE.MeshPhongMaterial( { color, flatShading: true } ), // top
+          new THREE.MeshPhongMaterial( { color, flatShading: true } ) // bottom
+        ]
+      );
+      cabin.position.x = -40*zoom;
+      cabin.position.z = 20*zoom;
+      cabin.castShadow = true;
+      cabin.receiveShadow = true;
+      truck.add( cabin );
+
+      const frontWheel = new Wheel();
+      frontWheel.position.x = -38*zoom;
+      truck.add( frontWheel );
+
+      const middleWheel = new Wheel();
+      middleWheel.position.x = -10*zoom;
+      truck.add( middleWheel );
+
+      const backWheel = new Wheel();
+      backWheel.position.x = 30*zoom;
+      truck.add( backWheel );
+
+      return truck;
+    }
 
   function Plank() {
     const car = new THREE.Group();
@@ -579,28 +633,41 @@ function Lane(index) {
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
             break;
         }
-        // case 'train' : {
-        //     this.type = 'train';
-        //     this.mesh = new Water();
-        //     this.direction = Math.random() >= 0.5;
-        //
-        //     const occupiedPositions = new Set();
-        //     this.vechicles = [1,2,3].map(() => {
-        //         const vechicle = new Plank();
-        //         let position;
-        //         do {
-        //             position = Math.floor(Math.random()*columns/2);
-        //         }while(occupiedPositions.has(position))
-        //         occupiedPositions.add(position);
-        //         vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-        //         if(!this.direction) vechicle.rotation.z = Math.PI;
-        //         this.mesh.add( vechicle );
-        //         return vechicle;
-        //     })
-        //
-        //     this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
-        //     break;
-        // }
+        case 'train' : {
+            this.mesh = new Road();
+            this.direction = Math.random() >= 0.5;
+
+            const occupiedPositions = new Set();
+            this.vechicles = [1].map(() => {
+                const vechicle = new Train();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/3);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) vechicle.rotation.z = Math.PI;
+                this.mesh.add( vechicle );
+                return vechicle;
+            })
+
+            // AT
+            this.coins = [1,2].map(() => {
+                const coin = new Coin();
+                let position;
+                do {
+                    position = Math.floor(Math.random()*columns/2);
+                }while(occupiedPositions.has(position))
+                occupiedPositions.add(position);
+                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                if(!this.direction) coin.rotation.z = Math.PI;
+                this.mesh.add( coin );
+                return coin;
+            })
+
+            this.speed = 40;
+            break;
+        }
     }
 }
 
@@ -716,7 +783,7 @@ function animate(timestamp) {
     const delta = timestamp - previousTimestamp;
     previousTimestamp = timestamp;
 
-    // Animate cars and trucks moving on the lane
+    // Animate cars and trucks and trains moving on the lane
     const aBitBeforeTheBeginingOfLane = -boardWidth*zoom/2 - positionWidth*2*zoom;
     const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
     lanes.forEach(lane => {
