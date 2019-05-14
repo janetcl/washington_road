@@ -40,6 +40,11 @@ let coinCount = 0;
 let enteredIceTimestamp = 0;
 let onIce = false;
 
+var plankTexture = new THREE.TextureLoader().load( "textures/wood.jpg" );
+// plankTexture.wrapS = THREE.RepeatWrapping;
+// plankTexture.wrapT = THREE.RepeatWrapping;
+// plankTexture.repeat.set( 2, 1);
+
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
 const carRightSideTexture = new Texture(110,40,[{x: 10, y: 0, w: 50, h: 30 }, {x: 70, y: 0, w: 30, h: 30 }]);
@@ -272,8 +277,9 @@ function Truck() {
 
     const main = new THREE.Mesh(
       new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 5*zoom ),
-      new THREE.MeshPhongMaterial( { color, flatShading: true } )
+      new THREE.MeshPhongMaterial( { color, flatShading: true, map: plankTexture } )
     );
+    plankTexture.wrapS = plankTexture.wrapT = THREE.RepeatWrapping;
     main.position.z = 0*zoom;
     main.castShadow = true;
     main.receiveShadow = true;
@@ -316,7 +322,7 @@ function Chicken() {
 
     const body = new THREE.Mesh(
       new THREE.BoxBufferGeometry( chickenSize*zoom, chickenSize*zoom, 20*zoom ),
-      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } )
+      new THREE.MeshPhongMaterial( { color: 0xff8f00, flatShading: true } )
     );
     body.position.z = 10*zoom;
     body.castShadow = true;
@@ -325,7 +331,7 @@ function Chicken() {
 
     const rowel = new THREE.Mesh(
         new THREE.BoxBufferGeometry( 2*zoom, 4*zoom, 2*zoom ),
-        new THREE.MeshLambertMaterial( { color: 0xF0619A, flatShading: true } )
+        new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } )
     );
     rowel.position.z = 21*zoom;
     rowel.castShadow = true;
