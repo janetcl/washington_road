@@ -446,6 +446,51 @@ function Road() {
     return road;
 }
 
+function NotFire() {
+    const ice = new THREE.Group();
+
+    const createSection = color => new THREE.Mesh(
+        new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
+        new THREE.MeshPhongMaterial( { color } )
+    );
+
+    const middle = createSection(0x734012);
+    middle.receiveShadow = true;
+    ice.add(middle);
+
+    const left = createSection(0x5D340F);
+    left.position.x = - boardWidth*zoom;
+    ice.add(left);
+
+    const right = createSection(0x5D340F);
+    right.position.x = boardWidth*zoom;
+    ice.add(right);
+
+    return ice;
+}
+
+function Fire() {
+    const ice = new THREE.Group();
+
+    const createSection = color => new THREE.Mesh(
+        new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
+        new THREE.MeshPhongMaterial( { color } )
+    );
+
+    const middle = createSection(0xFF3333);
+    middle.receiveShadow = true;
+    ice.add(middle);
+
+    const left = createSection(0xE60000);
+    left.position.x = - boardWidth*zoom;
+    ice.add(left);
+
+    const right = createSection(0xE60000);
+    right.position.x = boardWidth*zoom;
+    ice.add(right);
+
+    return ice;
+}
 
 // AT: Ice layer that players die on after standing for too long.
 function Ice() {
@@ -664,40 +709,11 @@ function Lane(index) {
             this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
             break;
         }
-        case 'train' : {
-            this.mesh = new Road();
-            this.direction = Math.random() >= 0.5;
-
-            const occupiedPositions = new Set();
-            this.vehicles = [1].map(() => {
-                const vehicle = new Train();
-                let position;
-                do {
-                    position = Math.floor(Math.random()*columns/3);
-                }while(occupiedPositions.has(position))
-                occupiedPositions.add(position);
-                vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vehicle.rotation.z = Math.PI;
-                this.mesh.add( vehicle );
-                return vehicle;
-            })
-
-            // AT
-            this.coins = [1,2].map(() => {
-                const coin = new Coin();
-                let position;
-                do {
-                    position = Math.floor(Math.random()*columns/2);
-                }while(occupiedPositions.has(position))
-                occupiedPositions.add(position);
-                coin.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) coin.rotation.z = Math.PI;
-                this.mesh.add( coin );
-                return coin;
-            })
-
-            this.speed = 40;
-            break;
+        case 'lava' : {
+          this.mesh = new NotFire();
+          this.period = Math.floor(Math.random()*800)+1000;
+          this.startTime = Math.floor(Math.random()*this.period);
+          break
         }
         case 'animal' : {
           this.mesh = new Grass();
@@ -854,6 +870,7 @@ function animate(timestamp) {
     const delta = timestamp - previousTimestamp;
     previousTimestamp = timestamp;
 
+
     // Animate cars and trucks and trains moving on the lane
     const aBitBeforeTheBeginingOfLane = -boardWidth*zoom/2 - positionWidth*2*zoom;
     const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
@@ -875,6 +892,14 @@ function animate(timestamp) {
               else vehicle.rotation.z = 0;
             }
           });
+        }
+        if(lane.type === 'lava') {
+          lane.mesh = new Fire();
+            console.log((lane.startTime + timestamp));
+            /*if ((lane.startTime + timestamp) % lane.period >= 0 && (lane.startTime + timestamp) % lane.period <= lane.period / 2) {
+              lane.mesh = Fire();
+            }
+            else lane.mesh = NotFire();*/
         }
     });
 
