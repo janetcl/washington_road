@@ -46,13 +46,19 @@ let washingtonRoadSound;
 let laneSpeeds;
 let plankSpeeds;
 
+const waterTexture = new THREE.TextureLoader().load("textures/ice.jpg");
+const iceTexture1 = new THREE.TextureLoader().load("textures/icetexture.jpg");
+const iceTexture2 = new THREE.TextureLoader().load("textures/watertexture.jpg");
+const iceTexture3 = new THREE.TextureLoader().load("textures/icetexture2.jpg");
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
 const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png");
 psafeTexture2.flipY = false;
+psafeTexture.flipX = false;
 const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
 const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg");
 umatterTexture2.flipY = false;
+umatterTexture.flipX = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -129,8 +135,6 @@ const initializeValues = () => {
     	washingtonRoadSound.play();
     });
 
-
-
     currentLane = 0;
     currentColumn = Math.floor(columns/2);
     coinCount = 0;
@@ -152,6 +156,9 @@ const initializeValues = () => {
     counterDOM.innerHTML = 0;
     counterDOM.style.visibility = 'visible';
     gameEnded = false;
+
+    iceMaterial.map = iceTexture1;
+    iceTexture2.dispose();
 }
 
 
@@ -523,26 +530,37 @@ function Fire() {
     return ice;
 }
 
+
+const iceMaterial = new THREE.MeshPhongMaterial({color: 0xCEF4FF, shininess: 50, flatShading: true, reflectivity: 1.0, map: iceTexture1})
 // AT: Ice layer that players die on after standing for too long.
 function Ice() {
     const ice = new THREE.Group();
 
-    const createSection = color => new THREE.Mesh(
-        new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
-        new THREE.MeshPhongMaterial( { color, shininess: 50, reflectivity: 1.0 } )
-    );
+    // const createSection = color => new THREE.Mesh(
+    //     new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ),
+    //     iceMaterial
+    //     // new THREE.MeshPhongMaterial ({color, shininess: 50, flatShading: true, reflectivity: 1.0, map: iceTexture1})
+    //     // new THREE.MeshPhongMaterial( { color, shininess: 50, reflectivity: 1.0 } )
+    // );
 
-    const middle = createSection(0xCEF4FF);
+    iceTexture1.wrapS = iceTexture1.wrapT = THREE.RepeatWrapping;
+    iceTexture2.wrapS = iceTexture2.wrapT = THREE.RepeatWrapping;
+    iceTexture3.wrapS = iceTexture3.wrapT = THREE.RepeatWrapping;
+
+    const middle = new THREE.Mesh (new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ), iceMaterial);
     middle.receiveShadow = true;
     ice.add(middle);
 
-    const left = createSection(0xCEF4FF);
+    const left = new THREE.Mesh (new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ), iceMaterial);
     left.position.x = - boardWidth*zoom;
     ice.add(left);
 
-    const right = createSection(0xCEF4FF);
+    const right = new THREE.Mesh (new THREE.PlaneBufferGeometry( boardWidth*zoom, positionWidth*zoom ), iceMaterial);
     right.position.x = boardWidth*zoom;
     ice.add(right);
+
+    ice.castShadow = true;
+    ice.receiveShadow = true;
 
     return ice;
 }
@@ -575,7 +593,7 @@ function Water() {
 
     const createSection = color => new THREE.Mesh(
         new THREE.BoxBufferGeometry( boardWidth*zoom, positionWidth*zoom, 3*zoom ),
-        new THREE.MeshPhongMaterial( { color } )
+        new THREE.MeshPhongMaterial ({color, shininess: 50, flatShading: true, reflectivity: 1.0})
     );
 
     const middle = createSection(0x71D4FF);
@@ -1045,6 +1063,10 @@ function animate(timestamp) {
        }
        if (timestamp - enteredIceTimestamp > 5 * 10**3) {
          chicken.rotation.x = Math.PI / 2;
+         iceMaterial.color = 0x000000;
+         iceMaterial.map = iceTexture2;
+         // lanes[currentLane].mesh.material.map = iceTexture2;
+			   iceTexture1.dispose();
          gameEnded = true;
          endDOM.style.visibility = 'visible';
        }
