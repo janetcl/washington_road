@@ -739,9 +739,14 @@ function Lane(index) {
             this.vehicles = [1,2,3].map(() => {
                 const vehicle = new Car();
                 let position;
+                let good;
                 do {
                     position = Math.floor(Math.random()*columns/2);
-                }while(occupiedPositions.has(position))
+                    good = true;
+                    for (let item of occupiedPositions) {
+                      if (Math.abs(item - position) <= 1) good = false;
+                    }
+                }while(occupiedPositions.has(position) || !good)
                 occupiedPositions.add(position);
                 vehicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
                 if(!this.direction) vehicle.rotation.z = Math.PI;
@@ -773,9 +778,14 @@ function Lane(index) {
             this.vehicles = [1,2].map(() => {
                 const vehicle = new Truck();
                 let position;
+                let good;
                 do {
                     position = Math.floor(Math.random()*columns/3);
-                }while(occupiedPositions.has(position))
+                    good = true;
+                    for (let item of occupiedPositions) {
+                      if (Math.abs(item - position) <= 1) good = false;
+                    }
+                }while(occupiedPositions.has(position) || !good)
                 occupiedPositions.add(position);
                 vehicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
                 if(!this.direction) vehicle.rotation.z = Math.PI;
@@ -880,19 +890,19 @@ document.querySelector("#retry").addEventListener("click", () => {
 
 window.addEventListener("keydown", event => {
 
-    if (event.keyCode == '38' && gameStarted) {
+    if (event.keyCode == '38' && gameStarted && !gameEnded) {
         // up arrow
         move('forward');
     }
-    else if (event.keyCode == '40' && gameStarted) {
+    else if (event.keyCode == '40' && gameStarted && !gameEnded) {
         // down arrow
         move('backward');
     }
-    else if (event.keyCode == '37' && gameStarted) {
+    else if (event.keyCode == '37' && gameStarted && !gameEnded) {
        // left arrow
        move('left');
     }
-    else if (event.keyCode == '39' && gameStarted) {
+    else if (event.keyCode == '39' && gameStarted && !gameEnded) {
        // right arrow
        move('right');
     }
