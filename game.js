@@ -1070,6 +1070,16 @@ function animate(timestamp) {
       if (!onIce) {
         onIce = true;
         enteredIceTimestamp = timestamp;
+        var listener = new THREE.AudioListener();
+        camera.add( listener );
+        var washingtonSound = new THREE.Audio( listener );
+        var washingtonLoader = new THREE.AudioLoader();
+        washingtonLoader.load( 'sounds/iceCrack.mp3', function( buffer ) {
+          washingtonSound.setBuffer( buffer );
+          washingtonSound.setLoop( false );
+          washingtonSound.setVolume( 0.5 );
+          washingtonSound.play();
+        });
        }
        if (timestamp - enteredIceTimestamp > 5 * 10**3) {
          chicken.rotation.x = Math.PI / 2;
