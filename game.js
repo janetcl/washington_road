@@ -643,17 +643,17 @@ function Lane(index) {
     else {
       if (difficulty == 'easy') {
         if (lanes[lanes.length-1].type == 'forest')
-          this.type = laneTypes[randomInProb([10, 5, Math.max(0, 80-0.1*index), 15, 10, 10])]
+          this.type = laneTypes[randomInProb([10, 5, Math.max(10, 80-0.1*index), 15, 10, 10])]
         else if (lanes[lanes.length-1].type == 'car')
-          this.type = laneTypes[randomInProb([20, 10, Math.max(0, 150-0.1*index), 20, 10, 10])]
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 150-0.1*index), 20, 10, 10])]
         else if (lanes[lanes.length-1].type == 'truck')
-          this.type = laneTypes[randomInProb([20, 10, Math.max(0, 150-0.1*index), 20, 10, 10])]
+          this.type = laneTypes[randomInProb([20, 10, Math.max(10, 150-0.1*index), 20, 10, 10])]
         else if (lanes[lanes.length-1].type == 'river')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 70, 10, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 150-0.1*index), 70, 10, 10])]
         else if (lanes[lanes.length-1].type == 'ice')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 100-0.1*index), 20, 20, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 100-0.1*index), 20, 20, 10])]
         else if (lanes[lanes.length-1].type == 'animal')
-          this.type = laneTypes[randomInProb([10, 10, Math.max(0, 150-0.1*index), 20, 5, 10])]
+          this.type = laneTypes[randomInProb([10, 10, Math.max(10, 150-0.1*index), 20, 5, 10])]
       }
       else if (difficulty == 'medium') {
         if (lanes[lanes.length-1].type == 'forest')
