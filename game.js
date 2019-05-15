@@ -43,6 +43,7 @@ let onIce = false;
 let gameStarted = false;
 let difficulty;
 let washingtonRoadSound;
+let iceSound;
 let laneSpeeds;
 let plankSpeeds;
 
@@ -1072,13 +1073,13 @@ function animate(timestamp) {
         enteredIceTimestamp = timestamp;
         var listener = new THREE.AudioListener();
         camera.add( listener );
-        var washingtonSound = new THREE.Audio( listener );
-        var washingtonLoader = new THREE.AudioLoader();
-        washingtonLoader.load( 'sounds/iceCrack.mp3', function( buffer ) {
-          washingtonSound.setBuffer( buffer );
-          washingtonSound.setLoop( false );
-          washingtonSound.setVolume( 0.5 );
-          washingtonSound.play();
+        iceSound = new THREE.Audio( listener );
+        var iceLoader = new THREE.AudioLoader();
+        iceLoader.load( 'sounds/iceCrack.mp3', function( buffer ) {
+          iceSound.setBuffer( buffer );
+          iceSound.setLoop( false );
+          iceSound.setVolume( 0.7 );
+          iceSound.play();
         });
        }
        if (timestamp - enteredIceTimestamp > 5 * 10**3) {
@@ -1091,6 +1092,7 @@ function animate(timestamp) {
          endDOM.style.visibility = 'visible';
        }
     } else if (onIce) {
+      iceSound.stop();
       onIce = false;
     }
 
