@@ -55,11 +55,13 @@ const iceTexture2 = new THREE.TextureLoader().load("textures/watertexture.jpg");
 const iceTexture3 = new THREE.TextureLoader().load("textures/icetexture2.jpg");
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
-const psafeTexture2 = new THREE.TextureLoader().load("textures/psafeFlipped.png");
+const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png");
 psafeTexture2.flipY = false;
+psafeTexture.flipX = false;
 const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
-const umatterTexture2 = new THREE.TextureLoader().load("textures/umatterFlipped.jpg");
+const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg");
 umatterTexture2.flipY = false;
+umatterTexture.flipX = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -899,7 +901,6 @@ document.querySelector("#retry").addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", event => {
-
     if (event.keyCode == '38' && gameStarted && !gameEnded) {
         event.preventDefault();
         // up arrow
@@ -1002,7 +1003,6 @@ function toScreenPosition(obj, camera)
 var prevPosition = 0;
 
 function animate(timestamp) {
-
     requestAnimationFrame( animate );
 
     if (!gameStarted) return;
