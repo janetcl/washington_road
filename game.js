@@ -103,7 +103,7 @@ const addLane = () => {
     }
     const index = lanes.length;
     const lane = new Lane(index);
-    console.log(lane);
+    // console.log(lane);
     lane.mesh.position.y = index*positionWidth*zoom;
     scene.add(lane.mesh);
     lanes.push(lane);
@@ -1053,7 +1053,7 @@ function animate(timestamp) {
         }
         if(lane.type === 'lava') {
           lane.mesh = new Fire();
-            console.log((lane.startTime + timestamp));
+            // console.log((lane.startTime + timestamp));
             /*if ((lane.startTime + timestamp) % lane.period >= 0 && (lane.startTime + timestamp) % lane.period <= lane.period / 2) {
               lane.mesh = Fire();
             }
