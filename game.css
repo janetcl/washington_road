@@ -25,17 +25,23 @@ button {
 }
 #intro {
   position: absolute;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   visibility: visible;
 }
+
+.intro-img {
+  width: 100%;
+  height: 100%;
+}
+
 #end {
   position: absolute;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
