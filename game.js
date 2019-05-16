@@ -49,6 +49,7 @@ let iceSound;
 let laneSpeeds;
 let plankSpeeds;
 
+// WASHINGTON ROAD: Initializing new textures (water, ice, planks, trucks)
 const waterTexture = new THREE.TextureLoader().load("textures/ice.jpg");
 const iceTexture1 = new THREE.TextureLoader().load("textures/icetexture.jpg");
 const iceTexture2 = new THREE.TextureLoader().load("textures/watertexture.jpg");
@@ -82,6 +83,7 @@ const generateLanes = () => [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9].map
     return lane;
 }).filter((lane) => lane.index >= 0);
 
+// WASHINGTON ROAD: added different lane speeds for varying difficulty levels
 const addLane = () => {
     for (let i = 0; i < laneSpeeds['easy'].length; i++) {
       laneSpeeds['easy'][0] += 0.01;
@@ -112,7 +114,7 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-
+// WASHINGTON ROAD: added difficulty types, different truck colors and textures
 const laneTypes = ['car', 'truck', 'forest', 'river', 'ice', 'animal'];
 const difficultyTypes = ['easy', 'medium', 'hard'];
 const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
@@ -122,6 +124,7 @@ const truckTextures2 = [psafeTexture2, umatterTexture2];
 
 const threeHeights = [20,45,60];
 
+// WASHINGTON ROAD: Modified initialization to include new features
 const initializeValues = () => {
     laneSpeeds = {'easy': [1, 1.5, 2, 3], 'medium': [2, 2.5, 3, 4, 5, 6], 'hard': [3, 3.5, 4.5, 6, 9]}
     plankSpeeds = {'easy': [2.5, 3.5, 4, 5], 'medium': [3.5, 4.5, 5.5, 6.5], 'hard': [4, 5, 6.5, 8.5]};
@@ -221,7 +224,7 @@ function Wheel() {
     wheel.position.z = 6*zoom;
     return wheel;
 }
-// AT: Coins increase the player score
+// WASHINGTON ROAD: Coins increase the player score
 function Coin() {
   var geometry = new THREE.CylinderBufferGeometry( 10*zoom, 10*zoom, 6*zoom, 10 );
   var material = new THREE.MeshPhongMaterial( {color: 0xFFDF2D, flatShading: true} );
@@ -277,6 +280,7 @@ function Car() {
   return car;
 }
 
+// WASHINGTON ROAD: created a Bagel Obstacle using TorusGeometry and the MeshToonMaterial
 function Bagel() {
   var geometry = new THREE.TorusGeometry( 18, 10.2, 27, 100 );
   var material = new THREE.MeshToonMaterial( { color: 0xFCE9B0 } );
@@ -290,6 +294,7 @@ function Bagel() {
 function Truck() {
     const truck = new THREE.Group();
     const color = vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
+    // WASHINGTON ROAD: modified the truck texture to be either the UMatter Logo or the PSAFE Logo
     const truckColorVal = Math.floor(Math.random() * truckTextures.length);
     const cargoColor = truckColors[truckColorVal];
     const texture = truckTextures[truckColorVal];
@@ -352,7 +357,7 @@ function Truck() {
     return truck;
   }
 
-
+// WASHINGTON ROAD: Created Plank() object for the river
   function Plank() {
     const car = new THREE.Group();
     const color = 0x9F5919;
@@ -399,6 +404,7 @@ function Three() {
     return three;
 }
 
+// WASHINGTON ROAD: modified the chicken Mesh Group to be a Princeton Student
 function Chicken() {
     const chicken = new THREE.Group();
 
@@ -487,6 +493,7 @@ function Road() {
     return road;
 }
 
+// WASHINGTON ROAD: attempted a "fire" lane type (still in progress)
 function NotFire() {
     const ice = new THREE.Group();
 
@@ -510,6 +517,7 @@ function NotFire() {
     return ice;
 }
 
+// WASHINGTON ROAD: attempted a "fire" lane type (still in progress)
 function Fire() {
     const ice = new THREE.Group();
 
@@ -533,7 +541,7 @@ function Fire() {
     return ice;
 }
 
-
+// WASHINGTON ROAD: Created an Ice Material using different textures
 const iceMaterial = new THREE.MeshPhongMaterial({color: 0xCEF4FF, shininess: 50, flatShading: true, reflectivity: 1.0, map: iceTexture1})
 // AT: Ice layer that players die on after standing for too long.
 function Ice() {
@@ -568,6 +576,7 @@ function Ice() {
     return ice;
 }
 
+// WASHINGTON ROAD: attempted train lane (still in progress)
 function Track() {
     const road = new THREE.Group();
 
@@ -591,6 +600,7 @@ function Track() {
     return road;
 }
 
+// WASHINGTON ROAD: water lane type for the river
 function Water() {
     const water = new THREE.Group();
 
@@ -655,6 +665,7 @@ function randomInProb(array) {
     return 0;
 }
 
+// WASHINGTON ROAD: modified probabilities of the next lane's procedural generation
 function Lane(index) {
     this.index = index;
     if (index <= 0)
@@ -756,7 +767,7 @@ function Lane(index) {
                 this.mesh.add( vehicle );
                 return vehicle;
             })
-            // AT
+            // WASHINGTON ROAD: Added coin types, included positions of coins
             this.coins = [1,2].map(() => {
                 const coin = new Coin();
                 let position;
@@ -796,7 +807,7 @@ function Lane(index) {
                 return vehicle;
             })
 
-            // AT
+            // WASHINGTON ROAD: Added coin types, included positions of coins
             this.coins = [1,2].map(() => {
                 const coin = new Coin();
                 let position;
@@ -813,6 +824,7 @@ function Lane(index) {
             this.speed = laneSpeeds[difficulty][Math.floor(Math.random()*laneSpeeds[difficulty].length)];
             break;
         }
+        // WASHINGTON ROAD: New river lane type with planks
         case 'river' : {
             this.type = 'river';
             this.mesh = new Water();
@@ -835,12 +847,14 @@ function Lane(index) {
             this.speed = plankSpeeds[difficulty][Math.floor(Math.random()*plankSpeeds[difficulty].length)];
             break;
         }
+        // WASHINGTON ROAD: lava lane type (in progress)
         case 'lava' : {
           this.mesh = new NotFire();
           this.period = Math.floor(Math.random()*800)+1000;
           this.startTime = Math.floor(Math.random()*this.period);
           break
         }
+        // WASHINGTON ROAD: "animal" (aka bagel) lane type
         case 'animal' : {
           this.mesh = new Grass();
           this.direction = Math.random() >= 0.5;
@@ -859,7 +873,7 @@ function Lane(index) {
               return vehicle;
           })
 
-          // AT
+          // WASHINGTON ROAD: Coins in the Animal lane
           this.coins = [1,2].map(() => {
               const coin = new Coin();
               let position;
@@ -1075,9 +1089,7 @@ function animate(timestamp) {
       }
       currentColumn = Math.round((chicken.position.x + 672) / 84);
     }
-    // console.log(chicken.position);
-    // console.log(currentColumn);
-    // console.log(currentLane);
+    // WASHINGTON ROAD: added ice lane type with audio handler
     if (lanes[currentLane].type === 'ice') {
       if (!onIce) {
         onIce = true;
@@ -1093,11 +1105,11 @@ function animate(timestamp) {
           iceSound.play();
         });
        }
+       // WASHINGTON ROAD: ice kills you if you are on it for too long
        if (timestamp - enteredIceTimestamp > 5 * 10**3) {
          chicken.rotation.x = Math.PI / 2;
          iceMaterial.color = 0x000000;
          iceMaterial.map = iceTexture2;
-         // lanes[currentLane].mesh.material.map = iceTexture2;
 			   iceTexture1.dispose();
          gameEnded = true;
          counterFinalDOM.innerHTML = currentLane + coinCount;
@@ -1213,7 +1225,7 @@ function animate(timestamp) {
             }
         });
 
-        // AT: check for coin collision
+        // WASHINGTON ROAD: check for coin collision
         const coinLength = 10;
         let toRemove = [];
         lanes[currentLane].coins.forEach(coin => {
@@ -1239,6 +1251,7 @@ function animate(timestamp) {
           lanes[currentLane].coins.splice(lanes[currentLane].coins.indexOf(coin), 1);
         });
     }
+    // WASHINGTON ROAD: river lane type, handle death accordingly
     if(lanes[currentLane].type === 'river') {
         const chickenMinX = originalChickenX - chickenSize*zoom/2;
         const chickenMaxX = originalChickenX + chickenSize*zoom/2;
@@ -1266,6 +1279,7 @@ function animate(timestamp) {
     camera.matrixWorldInverse.getInverse( camera.matrixWorld );
     cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
     frustum.setFromMatrix( cameraViewProjectionMatrix );
+    // WASHINGTON ROAD: user dies if the camera cuts them out of view
     // frustum is now ready to check all the objects you need
     if (!frustum.containsPoint(chicken.position)) {
       chicken.rotation.x = Math.PI / 2;
