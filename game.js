@@ -55,11 +55,13 @@ const iceTexture2 = new THREE.TextureLoader().load("textures/watertexture.jpg");
 const iceTexture3 = new THREE.TextureLoader().load("textures/icetexture2.jpg");
 const plankTexture = new THREE.TextureLoader().load("textures/wood1.png");
 const psafeTexture = new THREE.TextureLoader().load("textures/psafe.png");
-const psafeTexture2 = new THREE.TextureLoader().load("textures/psafeFlipped.png");
+const psafeTexture2 = new THREE.TextureLoader().load("textures/psafe.png");
 psafeTexture2.flipY = false;
+psafeTexture.flipX = false;
 const umatterTexture = new THREE.TextureLoader().load("textures/umatter.jpg");
-const umatterTexture2 = new THREE.TextureLoader().load("textures/umatterFlipped.jpg");
+const umatterTexture2 = new THREE.TextureLoader().load("textures/umatter.jpg");
 umatterTexture2.flipY = false;
+umatterTexture.flipX = false;
 
 const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
 const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
@@ -944,7 +946,6 @@ window.addEventListener("keydown", event => {
 });
 
 function move(direction) {
-    if (gameEnded) return;
     const finalPositions = moves.reduce((position,move) => {
         if(move === 'forward') return {lane: position.lane+1, column: position.column};
         if(move === 'backward') return {lane: position.lane-1, column: position.column};
@@ -1156,7 +1157,6 @@ function animate(timestamp) {
             }
         }
         // Once a step has ended
-        if (gameEnded) return;
         if(moveDeltaTime > stepTime) {
             prevPosition = chicken.position.x;
             switch(moves[0]) {
