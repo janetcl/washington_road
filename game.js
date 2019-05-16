@@ -1,4 +1,5 @@
 const counterDOM = document.getElementById('counter');
+const counterFinalDOM = document.getElementById('counterFinal');
 const endDOM = document.getElementById('end');
 const introDOM = document.getElementById('intro');
 
@@ -43,6 +44,7 @@ let onIce = false;
 let gameStarted = false;
 let difficulty;
 let washingtonRoadSound;
+let washingtonSound;
 let iceSound;
 let laneSpeeds;
 let plankSpeeds;
@@ -877,8 +879,17 @@ function Lane(index) {
     }
 }
 
+// document.querySelector("#mute").addEventListener("click", () => {
+//   washingtonRoadSound.setVolume(0.0);
+//   washingtonSound.setVolume(0.0);
+//   iceSound.setVolume(0.0);
+// })
+
+
+
 document.querySelector("#retry").addEventListener("click", () => {
     lanes.forEach(lane => scene.remove( lane.mesh ));
+    counterFinalDOM.style.visibility = 'hidden';
     endDOM.style.visibility = 'hidden';
     document.querySelector('canvas').visibility = 'hidden';
     introDOM.style.visibility = 'visible';
@@ -1089,6 +1100,8 @@ function animate(timestamp) {
          // lanes[currentLane].mesh.material.map = iceTexture2;
 			   iceTexture1.dispose();
          gameEnded = true;
+         counterFinalDOM.innerHTML = currentLane + coinCount;
+         counterFinalDOM.style.visibility = 'visible';
          endDOM.style.visibility = 'visible';
        }
     } else if (onIce) {
@@ -1194,6 +1207,8 @@ function animate(timestamp) {
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
                 gameEnded = true;
                 chicken.rotation.x = Math.PI / 2;
+                counterFinalDOM.innerHTML = currentLane + coinCount;
+                counterFinalDOM.style.visibility = 'visible';
                 endDOM.style.visibility = 'visible';
             }
         });
@@ -1207,7 +1222,7 @@ function animate(timestamp) {
             if(chickenMaxX > coinMinX && chickenMinX < coinMaxX) {
                 var listener = new THREE.AudioListener();
                 camera.add( listener );
-                var washingtonSound = new THREE.Audio( listener );
+                washingtonSound = new THREE.Audio( listener );
                 var washingtonLoader = new THREE.AudioLoader();
                 washingtonLoader.load( 'sounds/coin.wav', function( buffer ) {
                   washingtonSound.setBuffer( buffer );
@@ -1240,6 +1255,8 @@ function animate(timestamp) {
             chicken.rotation.y = Math.PI / 2;
             chicken.position.z = 1*zoom;
             gameEnded = true;
+            counterFinalDOM.innerHTML = currentLane + coinCount;
+            counterFinalDOM.style.visibility = 'visible';
             endDOM.style.visibility = 'visible';
         }
     }
@@ -1253,6 +1270,8 @@ function animate(timestamp) {
     if (!frustum.containsPoint(chicken.position)) {
       chicken.rotation.x = Math.PI / 2;
       gameEnded = true;
+      counterFinalDOM.innerHTML = currentLane + coinCount;
+      counterFinalDOM.style.visibility = 'visible';
       endDOM.style.visibility = 'visible';
     }
 
