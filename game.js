@@ -543,7 +543,7 @@ function Fire() {
 
 // WASHINGTON ROAD: Created an Ice Material using different textures
 const iceMaterial = new THREE.MeshPhongMaterial({color: 0xCEF4FF, shininess: 50, flatShading: true, reflectivity: 1.0, map: iceTexture1})
-// AT: Ice layer that players die on after standing for too long.
+// WASHINGTON ROAD: Ice layer that players die on after standing for too long.
 function Ice() {
     const ice = new THREE.Group();
 
@@ -933,6 +933,8 @@ window.addEventListener("keydown", event => {
        // right arrow
        move('right');
     }
+    // WASHINGTON ROAD: change the difficulty of the game depending on
+    // what key the player presses.
     else if (event.keyCode == '69' && !gameStarted) {
       // easy difficulty
         gameStarted = true;
@@ -942,7 +944,7 @@ window.addEventListener("keydown", event => {
 
     }
     else if (event.keyCode == '77' && !gameStarted) {
-      // easy difficulty
+      // medium difficulty
         gameStarted = true;
         difficulty = 'medium';
         introDOM.style.visibility = 'hidden';
@@ -950,7 +952,7 @@ window.addEventListener("keydown", event => {
 
     }
     else if (event.keyCode == '72' && !gameStarted) {
-      // easy difficulty
+      // hard difficulty
         gameStarted = true;
         difficulty = 'hard';
         introDOM.style.visibility = 'hidden';
@@ -1075,7 +1077,7 @@ function animate(timestamp) {
 
 
 
-    // Animate planks and chicken and camera moving on lane
+    // WASHINGTON ROAD: Animate planks and chicken and camera moving on lane
     if (lanes[currentLane].type === 'river') {
       if(lanes[currentLane].direction) {
           chicken.position.x = chicken.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : chicken.position.x -= lanes[currentLane].speed/16*delta;
@@ -1169,6 +1171,7 @@ function animate(timestamp) {
             }
         }
         // Once a step has ended
+        // WASHINGTON ROAD: added special handling for the river lane
         if(moveDeltaTime > stepTime) {
             prevPosition = chicken.position.x;
             switch(moves[0]) {
