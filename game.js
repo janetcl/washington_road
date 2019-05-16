@@ -901,7 +901,6 @@ document.querySelector("#retry").addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", event => {
-
     if (event.keyCode == '38' && gameStarted && !gameEnded) {
         event.preventDefault();
         // up arrow
@@ -947,6 +946,7 @@ window.addEventListener("keydown", event => {
 });
 
 function move(direction) {
+    if (gameEnded) return;
     const finalPositions = moves.reduce((position,move) => {
         if(move === 'forward') return {lane: position.lane+1, column: position.column};
         if(move === 'backward') return {lane: position.lane-1, column: position.column};
@@ -1004,7 +1004,6 @@ function toScreenPosition(obj, camera)
 var prevPosition = 0;
 
 function animate(timestamp) {
-
     requestAnimationFrame( animate );
 
     if (!gameStarted) return;
@@ -1159,6 +1158,7 @@ function animate(timestamp) {
             }
         }
         // Once a step has ended
+        if (gameEnded) return;
         if(moveDeltaTime > stepTime) {
             prevPosition = chicken.position.x;
             switch(moves[0]) {
