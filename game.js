@@ -237,7 +237,7 @@ function Car() {
 
   const main = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 15*zoom ),
-    new THREE.MeshPhongMaterial( { color, flatShading: true } )
+    new THREE.MeshPhongMaterial( { color, flatShading: true, reflectivity: 1.0, shininess: 50 } )
   );
   main.position.z = 12*zoom;
   main.castShadow = true;
