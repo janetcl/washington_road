@@ -101,7 +101,7 @@ const addLane = () => {
     }
     const index = lanes.length;
     const lane = new Lane(index);
-    console.log(lane);
+    // console.log(lane);
     lane.mesh.position.y = index*positionWidth*zoom;
     scene.add(lane.mesh);
     lanes.push(lane);
@@ -169,7 +169,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
+renderer.setSize( window.innerWidth - 1, window.innerHeight - 1);
 document.body.appendChild( renderer.domElement );
 
 hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
@@ -901,11 +901,13 @@ document.querySelector("#retry").addEventListener("click", () => {
 window.addEventListener("keydown", event => {
 
     if (event.keyCode == '38' && gameStarted && !gameEnded) {
+        event.preventDefault();
         // up arrow
         move('forward');
     }
     else if (event.keyCode == '40' && gameStarted && !gameEnded) {
         // down arrow
+        event.preventDefault();
         move('backward');
     }
     else if (event.keyCode == '37' && gameStarted && !gameEnded) {
@@ -1049,7 +1051,7 @@ function animate(timestamp) {
         }
         if(lane.type === 'lava') {
           lane.mesh = new Fire();
-            console.log((lane.startTime + timestamp));
+            // console.log((lane.startTime + timestamp));
             /*if ((lane.startTime + timestamp) % lane.period >= 0 && (lane.startTime + timestamp) % lane.period <= lane.period / 2) {
               lane.mesh = Fire();
             }
